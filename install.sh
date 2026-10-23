@@ -302,6 +302,7 @@ else
 fi
 
 copy_if_exists "$SCRIPT_DIR/config/terminator/config"    "$USER_HOME/.config/terminator/config"
+
 copy_if_exists "$SCRIPT_DIR/config/i3/config"            "$USER_HOME/.config/i3/config"
 copy_if_exists "$SCRIPT_DIR/config/i3/i3blocks.conf"     "$USER_HOME/.config/i3/i3blocks.conf"
 copy_if_exists "$SCRIPT_DIR/config/i3/clipboard_fix.sh"  "$USER_HOME/.config/i3/clipboard_fix.sh"
@@ -314,6 +315,17 @@ fi
 
 copy_if_exists "$SCRIPT_DIR/fehbg" "$USER_HOME/.fehbg"
 
+# i3: layout e script personalizzato per Kitty a tre pannelli
+if [[ -d "$SCRIPT_DIR/config/i3/layouts" ]]; then
+    mkdir -p "$USER_HOME/.config/i3/layouts"
+    cp -a "$SCRIPT_DIR/config/i3/layouts/." "$USER_HOME/.config/i3/layouts/"
+fi
+
+if [[ -d "$SCRIPT_DIR/config/i3/scripts" ]]; then
+    mkdir -p "$USER_HOME/.config/i3/scripts"
+    cp -a "$SCRIPT_DIR/config/i3/scripts/." "$USER_HOME/.config/i3/scripts/"
+fi
+
 # ---------- Permissions ----------
 
 log "Fixing executable permissions"
@@ -325,6 +337,7 @@ fi
 for f in \
     "$USER_HOME/.config/polybar/launch.sh" \
     "$USER_HOME/.config/i3/clipboard_fix.sh" \
+    "$USER_HOME/.config/i3/scripts/kitty-3pane.sh" \
     "$USER_HOME/.fehbg"
 do
     if [[ -f "$f" ]]; then chmod +x "$f"; fi
