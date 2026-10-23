@@ -239,6 +239,28 @@ export NVM_DIR="$HOME/.nvm"
 
 # cronologia condivisa tra le sessioni
 setopt inc_append_history share_history
+
+# Funzione per impostare e rimuovere il Target in Polybar
+target() {
+    if [ -z "$1" ]; then
+        echo "Uso: target <IP>"
+    else
+        echo "$1" > "$HOME/.config/bin/target"
+        echo "Target impostato su: $1"
+    fi
+}
+
+cleartarget() {
+    echo "" > "$HOME/.config/bin/target"
+    echo "Target rimosso"
+}
+
+# >>> 0x0ps Matrix Prompt >>>
+autoload -Uz colors && colors
+PROMPT='%F{green}┌──(%F{green}%n%F{cyan}㉿%F{cyan}%m%F{green})-[%F{yellow}%~%F{green}]%f
+%F{red}└─%F{green}❯%f '
+# <<< 0x0ps Matrix Prompt <<<
+
 # <<< 0x0ps <<<
 ZSHBLOCK
 
