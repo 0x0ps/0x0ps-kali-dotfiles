@@ -134,6 +134,7 @@ client.unfocused        #333333 #333333 #888888 #333333   #333333
 client.urgent           #900000 #900000 #ffffff #900000   #900000
 
 # Startup Applications
+exec --no-startup-id spice-vdagent
 exec_always --no-startup-id sh ~/.fehbg
 exec_always --no-startup-id picom -b --config ~/.config/compton/compton.conf
 exec_always --no-startup-id ~/.config/i3/clipboard_fix.sh
