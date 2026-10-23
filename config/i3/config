@@ -135,6 +135,7 @@ client.urgent           #900000 #900000 #ffffff #900000   #900000
 
 # Startup Applications
 exec --no-startup-id spice-vdagent
+exec --no-startup-id ~/.config/i3/set-resolution.sh
 exec_always --no-startup-id sh ~/.fehbg
 exec_always --no-startup-id picom -b --config ~/.config/compton/compton.conf
 exec_always --no-startup-id ~/.config/i3/clipboard_fix.sh
@@ -145,7 +146,6 @@ exec --no-startup-id sleep 2 && copyq
 bindsym Print exec flameshot gui
 
 # Wallpaper
-exec_always --no-startup-id feh --bg-fill /home/null0x/Pictures/wallpaper.png
 
 bindsym $mod+Shift+v exec copyq show
 
