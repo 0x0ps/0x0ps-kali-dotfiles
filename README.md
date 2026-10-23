@@ -14,6 +14,7 @@ A custom i3-gaps desktop environment setup for Kali Linux with polybar, custom s
 - Custom rofi launcher with Nord theme
 - Multiple terminal options (Alacritty, Kitty, Terminator, Gnome Terminal)
 - Tmux configuration with clipboard integration
+- SPICE clipboard integration for Proxmox virtual machines
 - Custom scripts for network monitoring and target tracking
 - Pywal color scheme support
 
