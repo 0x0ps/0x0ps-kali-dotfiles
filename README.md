@@ -10,6 +10,7 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [First login](#first-login)
+- [i3 keyboard shortcuts](#i3-keyboard-shortcuts)
 - [Adaptive SPICE resolution](#adaptive-spice-resolution)
 - [Useful commands](#useful-commands)
 - [Troubleshooting](#troubleshooting)
@@ -88,6 +89,78 @@ If you are using a display manager that does not offer an i3 session, check that
 - The installer copies the repository wallpaper into `~/.wallpaper` and configures `feh` to use it.
 - Open a new Zsh session to load the updated shell configuration.
 
+## i3 keyboard shortcuts
+
+These shortcuts reflect the key bindings in this repository's current `config/i3/config`.
+
+**Key notation:** `Mod` is the **Super/Windows key** on most keyboards. Hold the listed keys together unless the action says otherwise.
+
+### Windows and applications
+
+| Shortcut | Action |
+|---|---|
+| `Mod + Enter` | Open Kitty terminal |
+| `Mod + d` | Open the Rofi run launcher |
+| `Mod + Shift + f` | Open Firefox |
+| `Mod + w` | Close the focused window |
+| `Mod + f` | Toggle fullscreen |
+| `Mod + Shift + Space` | Toggle floating mode for the focused window |
+| `Mod + Space` | Switch focus between tiled and floating windows |
+| `Mod + a` | Focus the parent container |
+| `Print` | Open Flameshot for a screenshot |
+| `Mod + Shift + v` | Show CopyQ clipboard history |
+| `Mod + Shift + Enter` | Run the Kitty three-pane script |
+
+### Move focus and windows
+
+| Shortcut | Action |
+|---|---|
+| `Mod + ← / ↓ / ↑ / →` | Move focus to the window in that direction |
+| `Mod + j / k / l / ;` | Move focus left / down / up / right |
+| `Mod + Shift + ← / ↓ / ↑ / →` | Move the focused window in that direction |
+| `Mod + Shift + j / k / l / ;` | Move the focused window left / down / up / right |
+
+### Workspaces
+
+| Shortcut | Action |
+|---|---|
+| `Mod + 1` … `Mod + 9` | Switch to workspace 1–9 |
+| `Mod + 0` | Switch to workspace 10 |
+| `Mod + Shift + 1` … `Mod + Shift + 9` | Move the focused window to workspace 1–9 |
+| `Mod + Shift + 0` | Move the focused window to workspace 10 |
+
+### Layout and window arrangement
+
+| Shortcut | Action |
+|---|---|
+| `Mod + h` | Split horizontally |
+| `Mod + v` | Split vertically |
+| `Mod + s` | Use stacking layout |
+| `Mod + Shift + t` | Use tabbed layout |
+| `Mod + e` | Toggle split layout |
+| `Mod + r` | Enter resize mode |
+| `Enter` or `Esc` (in resize mode) | Leave resize mode |
+
+While in resize mode:
+
+| Shortcut | Action |
+|---|---|
+| `← / →` | Shrink / grow width |
+| `↑ / ↓` | Shrink / grow height |
+| `j / ;` | Shrink / grow width |
+| `k / l` | Grow / shrink height |
+
+### i3 controls and session
+
+| Shortcut | Action |
+|---|---|
+| `Mod + Shift + c` | Reload the i3 configuration |
+| `Mod + Shift + r` | Restart i3 |
+| `Mod + Shift + e` | Show the i3 exit confirmation |
+| `Mod + Esc` | Power off the system |
+
+> **Tip:** The `Mod + Esc` shortcut powers off the machine immediately. Save your work before using it. Shortcuts can differ if you edit your local i3 configuration.
+
 ## Adaptive SPICE resolution
 
 The repository includes `config/i3/set-resolution.sh`. During installation it is copied to:
@@ -134,7 +207,7 @@ To prevent it from starting again, edit `~/.config/i3/config` and comment out or
 exec --no-startup-id ~/.config/i3/set-resolution.sh
 ```
 
-Then reload i3 with `Mod+Shift+r` (usually the Windows key + Shift + R), or log out and back in.
+Then reload i3 with `Mod+Shift+c`, or log out and back in.
 
 ## Useful commands
 
