@@ -115,7 +115,8 @@ apt-get install -y \
     unzip \
     fontconfig \
     build-essential \
-    xterm
+    xterm \
+    spice-vdagent
 
 # kitty come x-terminal-emulator (non fatale)
 if [[ -x /usr/bin/kitty ]]; then
