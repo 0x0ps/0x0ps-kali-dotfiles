@@ -95,7 +95,7 @@ apt-get install -y \
     rofi \
     unclutter \
     cargo \
-    compton \
+    picom \
     papirus-icon-theme \
     imagemagick \
     terminator \
