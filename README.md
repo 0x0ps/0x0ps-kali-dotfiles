@@ -21,7 +21,7 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 
 - **i3 window manager** configuration and keyboard shortcuts.
 - **Polybar** with custom status modules, including HTB VPN, USB/Ethernet, and target information.
-- **Rofi** application launcher with a Nord theme.
+- **Rofi** application launcher with a custom translucent black theme and acid-green accents (`#A6FF00`).
 - **Rofi Type-5 powermenu** with icon-only controls, black background, and acid-green accents (`#A6FF00`).
 - **Kitty** terminal configuration.
 - **tmux** configuration and TPM plugin manager.
@@ -87,6 +87,12 @@ If you are using a display manager that does not offer an i3 session, check that
 
 The installer places the customized menu in `~/.config/rofi/powermenu/type-5/` and binds **Win/Super + Esc** to it. The menu uses the black / acid-green theme and icon-only actions. Press `Esc` to close it; selecting a power action opens a confirmation prompt.
 
+### Rofi application launcher
+
+The installer places the custom launcher theme at `~/.config/rofi/themes/null0x-launcher.rasi`.
+Press **Win/Super + D** to browse installed applications with a translucent dark background,
+acid-green labels, and an acid-green selection highlight.
+
 ### 6. Complete optional setup
 
 - Open a terminal and start tmux. Use `Ctrl+b`, then `Shift+i` to install tmux plugins through TPM.
@@ -105,7 +111,7 @@ These shortcuts reflect the key bindings in this repository's current `config/i3
 | Shortcut | Action |
 |---|---|
 | `Mod + Enter` | Open Kitty terminal |
-| `Mod + d` | Open the Rofi run launcher |
+| `Mod + d` | Open the themed Rofi application launcher |
 | `Mod + Shift + f` | Open Firefox |
 | `Mod + w` | Close the focused window |
 | `Mod + f` | Toggle fullscreen |
