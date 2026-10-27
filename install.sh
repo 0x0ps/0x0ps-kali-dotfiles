@@ -333,6 +333,17 @@ copy_if_exists "$SCRIPT_DIR/config/i3/set-resolution.sh" "$USER_HOME/.config/i3/
 copy_if_exists "$SCRIPT_DIR/config/compton/compton.conf" "$USER_HOME/.config/compton/compton.conf"
 copy_if_exists "$SCRIPT_DIR/config/rofi/config"          "$USER_HOME/.config/rofi/config"
 
+# null0x application launcher (transparent black / acid green)
+LAUNCHER_SOURCE="$SCRIPT_DIR/config/rofi/themes/null0x-launcher.rasi"
+LAUNCHER_DEST="$USER_HOME/.config/rofi/themes/null0x-launcher.rasi"
+if [[ -f "$LAUNCHER_SOURCE" ]]; then
+    mkdir -p "$USER_HOME/.config/rofi/themes"
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$LAUNCHER_SOURCE" "$LAUNCHER_DEST"
+else
+    warn "Rofi launcher theme missing; skipping launcher theme installation."
+fi
+
 # null0x Rofi Type-5 powermenu (icon-only, black / acid-green)
 POWERMENU_SOURCE="$SCRIPT_DIR/config/rofi/powermenu/type-5"
 POWERMENU_DEST="$USER_HOME/.config/rofi/powermenu/type-5"
