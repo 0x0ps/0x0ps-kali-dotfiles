@@ -96,6 +96,7 @@ apt-get install -y \
     unclutter \
     cargo \
     picom \
+    lsd \
     papirus-icon-theme \
     imagemagick \
     terminator \
