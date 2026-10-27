@@ -125,6 +125,60 @@ if [[ -x /usr/bin/kitty ]]; then
         warn "Could not set kitty as x-terminal-emulator (non fatal)."
 fi
 
+# ---------- Slick Greeter / LightDM ----------
+
+log "Configuring Slick Greeter and LightDM"
+
+apt-get install -y \
+    slick-greeter \
+    lightdm \
+    lightdm-gtk-greeter \
+    kali-themes \
+    kali-themes-common \
+    fonts-cantarell \
+    libglib2.0-bin
+
+# Installa lo stesso sfondo verificato sul sistema attuale.
+LOGIN_WALLPAPER="$SCRIPT_DIR/wallpaper/wallpaper.png"
+if [[ -f "$LOGIN_WALLPAPER" ]]; then
+    install -D -m 0644 "$LOGIN_WALLPAPER" \
+        /usr/share/backgrounds/0x0ps-login-wallpaper.png
+else
+    warn "Login wallpaper missing: $LOGIN_WALLPAPER"
+fi
+
+# Seleziona Slick Greeter senza modificare la sessione i3.
+install -d -m 0755 /etc/lightdm/lightdm.conf.d
+cat > /etc/lightdm/lightdm.conf.d/99-null0x-greeter.conf <<'EOF'
+[Seat:*]
+greeter-session=slick-greeter
+EOF
+
+# Override locale separato dai file di configurazione dei pacchetti.
+install -d -m 0755 /usr/share/glib-2.0/schemas
+cat > /usr/share/glib-2.0/schemas/90_null0x-slick-greeter.gschema.override <<'EOF'
+[x.dm.slick-greeter]
+background='/usr/share/backgrounds/0x0ps-login-wallpaper.png'
+background-color='#000000'
+draw-user-backgrounds=false
+draw-grid=false
+theme-name='Kali-Green-Dark'
+icon-theme-name='Flat-Remix-Green-Dark'
+font-name='Cantarell 11'
+show-clock=true
+clock-format='%d %b, %H:%M'
+show-hostname=false
+show-keyboard=true
+show-a11y=true
+show-power=true
+show-quit=true
+activate-numlock=true
+EOF
+
+glib-compile-schemas /usr/share/glib-2.0/schemas
+
+log "Slick Greeter configured. Reboot to apply the login-screen changes."
+
 # ---------- Directory utente (create come utente, non come root) ----------
 
 log "Preparing user directories"
