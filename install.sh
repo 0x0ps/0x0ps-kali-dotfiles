@@ -333,6 +333,20 @@ copy_if_exists "$SCRIPT_DIR/config/i3/set-resolution.sh" "$USER_HOME/.config/i3/
 copy_if_exists "$SCRIPT_DIR/config/compton/compton.conf" "$USER_HOME/.config/compton/compton.conf"
 copy_if_exists "$SCRIPT_DIR/config/rofi/config"          "$USER_HOME/.config/rofi/config"
 
+# null0x Rofi Type-5 powermenu (icon-only, black / acid-green)
+POWERMENU_SOURCE="$SCRIPT_DIR/config/rofi/powermenu/type-5"
+POWERMENU_DEST="$USER_HOME/.config/rofi/powermenu/type-5"
+
+if [[ -f "$POWERMENU_SOURCE/powermenu.sh" && -f "$POWERMENU_SOURCE/style-1.rasi" ]]; then
+    mkdir -p "$POWERMENU_DEST"
+    install -m 0755 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$POWERMENU_SOURCE/powermenu.sh" "$POWERMENU_DEST/powermenu.sh"
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$POWERMENU_SOURCE/style-1.rasi" "$POWERMENU_DEST/style-1.rasi"
+else
+    warn "Rofi powermenu source files are missing; skipping powermenu installation."
+fi
+
 if [[ -d "$SCRIPT_DIR/config/polybar" ]]; then
     cp -a "$SCRIPT_DIR/config/polybar/." "$USER_HOME/.config/polybar/"
 fi
@@ -363,6 +377,7 @@ for f in \
     "$USER_HOME/.config/i3/set-resolution.sh" \
     "$USER_HOME/.config/i3/clipboard_fix.sh" \
     "$USER_HOME/.config/i3/scripts/kitty-3pane.sh" \
+    "$USER_HOME/.config/rofi/powermenu/type-5/powermenu.sh" \
     "$USER_HOME/.fehbg"
 do
     if [[ -f "$f" ]]; then chmod +x "$f"; fi
