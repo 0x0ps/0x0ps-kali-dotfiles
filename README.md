@@ -22,6 +22,7 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 - **i3 window manager** configuration and keyboard shortcuts.
 - **Polybar** with custom status modules, including HTB VPN, USB/Ethernet, and target information.
 - **Rofi** application launcher with a Nord theme.
+- **Rofi Type-5 powermenu** with icon-only controls, black background, and acid-green accents (`#A6FF00`).
 - **Kitty** terminal configuration.
 - **tmux** configuration and TPM plugin manager.
 - **SPICE clipboard integration** for compatible virtual machines.
@@ -82,7 +83,11 @@ When the installer finishes:
 
 If you are using a display manager that does not offer an i3 session, check that the `i3` package is installed and select or configure the X11 i3 session manually.
 
-### 5. Complete optional setup
+### 5. Rofi power menu
+
+The installer places the customized menu in `~/.config/rofi/powermenu/type-5/` and binds **Win/Super + Esc** to it. The menu uses the black / acid-green theme and icon-only actions. Press `Esc` to close it; selecting a power action opens a confirmation prompt.
+
+### 6. Complete optional setup
 
 - Open a terminal and start tmux. Use `Ctrl+b`, then `Shift+i` to install tmux plugins through TPM.
 - Run `lxappearance` to select a GTK theme such as **Arc-Dark**, if desired.
@@ -157,9 +162,9 @@ While in resize mode:
 | `Mod + Shift + c` | Reload the i3 configuration |
 | `Mod + Shift + r` | Restart i3 |
 | `Mod + Shift + e` | Show the i3 exit confirmation |
-| `Mod + Esc` | Power off the system |
+| `Mod + Esc` | Open the Rofi power menu (choose an action, then confirm) |
 
-> **Tip:** The `Mod + Esc` shortcut powers off the machine immediately. Save your work before using it. Shortcuts can differ if you edit your local i3 configuration.
+> **Tip:** `Mod + Esc` opens the Rofi power menu. Power off, reboot, suspend, hibernate, and logout require a second confirmation. Press `Esc` to close the menu without taking action. Shortcuts can differ if you edit your local i3 configuration.
 
 ## Adaptive SPICE resolution
 
