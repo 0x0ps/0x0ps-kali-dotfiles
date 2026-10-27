@@ -325,6 +325,64 @@ else
     warn "Missing source: $SCRIPT_DIR/wallpaper"
 fi
 
+# ---------- LightDM login-screen wallpaper ----------
+
+# Use the same image as the i3 desktop wallpaper, but install it system-wide
+# because LightDM runs before the user's home directory is available.
+LOGIN_WALLPAPER_SOURCE="$SCRIPT_DIR/wallpaper/wallpaper.png"
+LOGIN_WALLPAPER_DEST="/usr/share/backgrounds/0x0ps-login-wallpaper.png"
+LIGHTDM_GREETER_CONFIG="/etc/lightdm/lightdm-gtk-greeter.conf"
+
+if [[ -f "$LOGIN_WALLPAPER_SOURCE" ]]; then
+    install -D -m 0644 "$LOGIN_WALLPAPER_SOURCE" "$LOGIN_WALLPAPER_DEST"
+
+    mkdir -p "$(dirname "$LIGHTDM_GREETER_CONFIG")"
+    if [[ ! -f "$LIGHTDM_GREETER_CONFIG" ]]; then
+        printf '[greeter]\\nbackground=%s\\n' "$LOGIN_WALLPAPER_DEST" > "$LIGHTDM_GREETER_CONFIG"
+        chmod 0644 "$LIGHTDM_GREETER_CONFIG"
+    else
+        # Update only the [greeter] background setting and preserve other options.
+        TMP_GREETER_CONFIG="$(mktemp)"
+        awk -v bg="$LOGIN_WALLPAPER_DEST" '
+            /^\\[greeter\\][[:space:]]*$/ {
+                if (in_greeter && !found) print "background=" bg
+                in_greeter=1
+                seen=1
+                found=0
+                print
+                next
+            }
+            /^\\[/ {
+                if (in_greeter && !found) print "background=" bg
+                in_greeter=0
+                found=0
+                print
+                next
+            }
+            in_greeter && /^[[:space:]]*background[[:space:]]*=/ {
+                if (!found) print "background=" bg
+                found=1
+                next
+            }
+            { print }
+            END {
+                if (in_greeter && !found) print "background=" bg
+                if (!seen) {
+                    print ""
+                    print "[greeter]"
+                    print "background=" bg
+                }
+            }
+        ' "$LIGHTDM_GREETER_CONFIG" > "$TMP_GREETER_CONFIG"
+        cat "$TMP_GREETER_CONFIG" > "$LIGHTDM_GREETER_CONFIG"
+        rm -f "$TMP_GREETER_CONFIG"
+        chmod 0644 "$LIGHTDM_GREETER_CONFIG"
+    fi
+    log "Configured LightDM login wallpaper: $LOGIN_WALLPAPER_DEST"
+else
+    warn "wallpaper/wallpaper.png not found; skipping LightDM login wallpaper."
+fi
+
 copy_if_exists "$SCRIPT_DIR/config/terminator/config"    "$USER_HOME/.config/terminator/config"
 
 copy_if_exists "$SCRIPT_DIR/config/i3/config"            "$USER_HOME/.config/i3/config"
