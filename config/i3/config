@@ -26,7 +26,7 @@ for_window [class="Firefox"] move to workspace 2
 exec --no-startup-id setxkbmap "us" ",winkeys" "grp:ctrl_alt_toggle"
 
 # Program launcher
-bindsym $mod+d exec "rofi -show run"
+bindsym $mod+d exec --no-startup-id rofi -show drun -theme ~/.config/rofi/themes/null0x-launcher.rasi
 
 # Change focus (Vim keys)
 bindsym $mod+j focus left
