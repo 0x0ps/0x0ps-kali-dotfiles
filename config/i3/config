@@ -15,8 +15,7 @@ bindsym $mod+Return exec kitty
 # Close window (Impostato su Mod4+w)
 bindsym $mod+w kill
 
-# Shutdown
-# null0x - Rofi Powermenu
+# Rofi Powermenu (Win/Super + Esc)
 bindsym $mod+Escape exec --no-startup-id ~/.config/rofi/powermenu/type-5/powermenu.sh
 
 # Browser
