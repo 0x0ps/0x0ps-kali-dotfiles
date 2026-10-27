@@ -1,0 +1,77 @@
+configuration {
+    show-icons: true;
+    drun-display-format: "{name}";
+}
+
+* {
+    font: "RobotoMono Nerd Font 11";
+    foreground: #FFFFFF;
+    background-color: rgba ( 0, 0, 0, 85 % );
+}
+
+window {
+    width: 760px;
+    padding: 18px;
+    border: 2px;
+    border-color: #A6FF00;
+    background-color: rgba ( 0, 0, 0, 85 % );
+}
+
+mainbox {
+    spacing: 12px;
+    children: [ inputbar, listview ];
+}
+
+inputbar {
+    padding: 12px;
+    spacing: 10px;
+    background-color: rgba ( 16, 16, 16, 85 % );
+    children: [ prompt, entry ];
+}
+
+prompt {
+    text-color: #A6FF00;
+}
+
+entry {
+    text-color: #A6FF00;
+    placeholder: "Search applications";
+    placeholder-color: #888888;
+}
+
+listview {
+    columns: 4;
+    lines: 3;
+    spacing: 8px;
+    fixed-height: false;
+}
+
+element {
+    padding: 10px;
+    background-color: rgba ( 16, 16, 16, 75 % );
+    text-color: #A6FF00;
+}
+
+element normal.normal {
+    text-color: #A6FF00;
+}
+
+element selected {
+    background-color: #A6FF00;
+    text-color: #000000;
+}
+
+element selected.normal {
+    background-color: #A6FF00;
+    text-color: #000000;
+}
+
+element-text {
+    text-color: inherit;
+    background-color: transparent;
+}
+
+element-icon {
+    size: 32px;
+    background-color: transparent;
+}
