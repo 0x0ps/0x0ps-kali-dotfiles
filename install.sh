@@ -97,6 +97,9 @@ apt-get install -y \
     cargo \
     picom \
     lsd \
+    bat \
+    fzf \
+    htop \
     papirus-icon-theme \
     imagemagick \
     terminator \
@@ -241,7 +244,11 @@ run_as_user mkdir -p \
     "$USER_HOME/.config/rofi" \
     "$USER_HOME/.config/kitty" \
     "$USER_HOME/.config/polybar" \
-    "$USER_HOME/.config/terminator"
+    "$USER_HOME/.config/terminator" \
+    "$USER_HOME/.config/lsd" \
+    "$USER_HOME/.config/bat" \
+    "$USER_HOME/.config/fzf" \
+    "$USER_HOME/.config/htop"
 
 # ---------- uv + pywal ----------
 
@@ -326,6 +333,23 @@ cat >> "$ZSHRC" <<'ZSHBLOCK'
 # >>> 0x0ps >>>
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
+# 0x0ps neon command-line palette
+export LS_COLORS='di=38;5;201:ln=38;5;51:pi=38;5;51:so=38;5;51:bd=38;5;45:cd=38;5;45:ex=38;5;46:fi=38;5;255:or=38;5;196:mi=38;5;196'
+export BAT_THEME="Monokai Extended"
+
+alias ls='lsd --color=always'
+alias ll='lsd -lh --group-dirs=first'
+alias la='lsd -lah --group-dirs=first'
+alias lt='lsd --tree --depth=2'
+alias lla='lsd -lah --group-dirs=first --git'
+
+if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
+    alias bat='batcat'
+fi
+
+# Load the version-controlled fzf palette and Zsh integration.
+[[ -r "$HOME/.config/fzf/fzf.zsh" ]] && source "$HOME/.config/fzf/fzf.zsh"
+
 export BUN_INSTALL="$HOME/.bun"
 [ -d "$BUN_INSTALL/bin" ] && export PATH="$BUN_INSTALL/bin:$PATH"
 
@@ -360,6 +384,22 @@ PROMPT='%F{green}┌──(%F{green}%n%F{cyan}㉿%F{cyan}%m%F{green})-[%F{yellow
 ZSHBLOCK
 
 chown "$ACTUAL_USER:$ACTUAL_USER" "$ZSHRC" "$ZSHRC.bak"
+
+# ---------- Git neon colors and useful aliases ----------
+
+log "Configuring Git colors and aliases"
+
+GIT_CONFIG_SOURCE="$SCRIPT_DIR/config/gitconfig"
+if [[ -f "$GIT_CONFIG_SOURCE" ]]; then
+    while IFS= read -r entry; do
+        [[ -n "$entry" ]] || continue
+        key="${entry%%=*}"
+        value="${entry#*=}"
+        run_as_user git config --global --replace-all "$key" "$value"
+    done < <(git config --file "$GIT_CONFIG_SOURCE" --list)
+else
+    warn "Git color config missing; skipping custom Git settings."
+fi
 
 # ---------- TPM ----------
 
@@ -402,6 +442,28 @@ copy_if_exists() {
 
 copy_if_exists "$SCRIPT_DIR/config/nvim" "$USER_HOME/.config/"
 copy_if_exists "$SCRIPT_DIR/config/bin"  "$USER_HOME/.config/"
+
+# Neon CLI tools: version-controlled user configuration.
+if [[ -f "$SCRIPT_DIR/config/lsd/config.yaml" ]]; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$SCRIPT_DIR/config/lsd/config.yaml" "$USER_HOME/.config/lsd/config.yaml"
+fi
+if [[ -f "$SCRIPT_DIR/config/lsd/colors.yaml" ]]; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$SCRIPT_DIR/config/lsd/colors.yaml" "$USER_HOME/.config/lsd/colors.yaml"
+fi
+if [[ -f "$SCRIPT_DIR/config/bat/config" ]]; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$SCRIPT_DIR/config/bat/config" "$USER_HOME/.config/bat/config"
+fi
+if [[ -f "$SCRIPT_DIR/config/fzf/fzf.zsh" ]]; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$SCRIPT_DIR/config/fzf/fzf.zsh" "$USER_HOME/.config/fzf/fzf.zsh"
+fi
+if [[ -f "$SCRIPT_DIR/config/htop/htoprc" ]]; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$SCRIPT_DIR/config/htop/htoprc" "$USER_HOME/.config/htop/htoprc"
+fi
 
 # kitty: copia tutto il contenuto della dir (merge, non annida)
 if [[ -d "$SCRIPT_DIR/config/kitty" ]]; then
@@ -555,7 +617,9 @@ Next steps:
   1. Al login verifica che sia selezionata la sessione i3 (configurata come predefinita).
   2. Apri una nuova shell zsh; se sei già in una shell aperta, esegui: source ~/.zshrc
      Verifica pywal con: command -v wal
-  3. Valida il config i3:  i3 -C -c ~/.config/i3/config
+  3. CLI neon: prova git st, git lg, bat <file>, fzf e htop.
+     Se il comando bat non esiste, l'installer configura l'alias verso batcat.
+  4. Valida il config i3:  i3 -C -c ~/.config/i3/config
   4. Nel config i3 sostituisci i riferimenti al vecchio terminale:
        grep -nE 'alacritty|terminator' ~/.config/i3/config
      con "kitty".
