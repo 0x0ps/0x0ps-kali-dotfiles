@@ -2,7 +2,7 @@
  *
  * Original author : Aditya Shakya (adi1090x) — customized by null0x
  * Github : @adi1090x
- * 
+ *
  * Rofi Theme File
  * Rofi Version: 1.7.3
  **/
@@ -15,12 +15,12 @@ configuration {
 /*****----- Global Properties -----*****/
 * {
     font:                        "RobotoMono Nerd Font 10";
-    background:                  #000000;
-    background-alt:              #101010;
-    foreground:                  #FFFFFF;
-    selected:                    #A6FF00;
+    background:                  transparent;
+    background-alt:              transparent;
+    foreground:                  #A6FF00;
+    selected:                    rgba ( 255, 0, 175, 65 % );
     active:                      #A6FF00;
-    urgent:                      #A6FF00;
+    urgent:                      #FF00AF;
 }
 
 /*
@@ -38,11 +38,11 @@ window {
     y-offset:                    0px;
 
     padding:                     0px;
-    border:                      0px solid;
+    border:                      2px solid;
     border-radius:               20px;
-    border-color:                @selected;
+    border-color:                #FF00AF;
     cursor:                      "default";
-    background-color:            @background;
+    background-color:            transparent;
 }
 
 /*****----- Main Box -----*****/
@@ -53,7 +53,7 @@ mainbox {
     padding:                     0px;
     border:                      0px solid;
     border-radius:               0px;
-    border-color:                @selected;
+    border-color:                #FF00AF;
     background-color:            transparent;
     children:                    [ "inputbar", "listview", "message" ];
 }
@@ -78,15 +78,15 @@ textbox-prompt-colon {
     str:                         " System";
     padding:                     12px;
     border-radius:               12px;
-    background-color:            @urgent;
-    text-color:                  @background;
+    background-color:            transparent;
+    text-color:                  #FF00AF;
 }
 prompt {
     enabled:                     true;
     padding:                     12px;
     border-radius:               12px;
-    background-color:            @active;
-    text-color:                  @background;
+    background-color:            transparent;
+    text-color:                  #00FFFF;
 }
 
 /*****----- Listview -----*****/
@@ -101,7 +101,7 @@ listview {
     reverse:                     false;
     fixed-height:                true;
     fixed-columns:               true;
-    
+
     spacing:                     10px;
     margin:                      10px;
     background-color:            transparent;
@@ -113,8 +113,8 @@ element {
     enabled:                     true;
     padding:                     18px 8px;
     border-radius:               12px;
-    background-color:            @background-alt;
-    text-color:                  @foreground;
+    background-color:            transparent;
+    text-color:                  #A6FF00;
     cursor:                      pointer;
 }
 element-text {
@@ -126,8 +126,8 @@ element-text {
     horizontal-align:            0.5;
 }
 element selected.normal {
-    background-color:            var(selected);
-    text-color:                  var(background);
+    background-color:            @selected;
+    text-color:                  #FFFFFF;
 }
 
 /*****----- Message -----*****/
@@ -136,11 +136,11 @@ message {
     margin:                      0px;
     padding:                     15px;
     border-radius:               0px;
-    background-color:            @background-alt;
-    text-color:                  @foreground;
+    background-color:            transparent;
+    text-color:                  #00FFFF;
 }
 textbox {
-    background-color:            inherit;
+    background-color:            transparent;
     text-color:                  inherit;
     vertical-align:              0.5;
     horizontal-align:            0.5;
