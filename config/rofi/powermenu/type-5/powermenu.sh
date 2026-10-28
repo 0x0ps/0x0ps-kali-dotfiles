@@ -38,23 +38,21 @@ rofi_cmd() {
 		-theme "${dir}/${theme}.rasi"
 }
 
-# Confirmation CMD
-confirm_cmd() {
-	rofi -theme-str 'window {location: center; anchor: center; fullscreen: false; width: 350px;}' \
+# Ask for confirmation
+# Use plain-text choices and string output so mouse selection is handled reliably.
+# Keep "No" first to reduce the risk of accidental power actions.
+confirm_exit() {
+	printf 'No\nYes\n' | rofi \
+		-theme-str 'window {location: center; anchor: center; fullscreen: false; width: 350px;}' \
 		-theme-str 'mainbox {children: [ "message", "listview" ];}' \
 		-theme-str 'listview {columns: 2; lines: 1;}' \
 		-theme-str 'element-text {horizontal-align: 0.5;}' \
 		-theme-str 'textbox {horizontal-align: 0.5;}' \
 		-dmenu \
-		-format i \
+		-format s \
 		-p 'Confirmation' \
 		-mesg 'Are you Sure?' \
 		-theme "${dir}/${theme}.rasi"
-}
-
-# Ask for confirmation
-confirm_exit() {
-	printf '%s\n%s\n' "$yes" "$no" | confirm_cmd
 }
 
 # Pass variables to Rofi dmenu
@@ -65,7 +63,7 @@ run_rofi() {
 # Execute Command
 run_cmd() {
 	selected="$(confirm_exit)"
-	if [[ "$selected" == "0" ]]; then
+	if [[ "$selected" == "Yes" ]]; then
 		if [[ $1 == '--shutdown' ]]; then
 			systemctl poweroff
 		elif [[ $1 == '--reboot' ]]; then
