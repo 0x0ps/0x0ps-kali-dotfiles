@@ -99,7 +99,7 @@ apt-get install -y \
     lsd \
     bat \
     fzf \
-    htop \
+    btop \
     papirus-icon-theme \
     imagemagick \
     terminator \
@@ -248,7 +248,7 @@ run_as_user mkdir -p \
     "$USER_HOME/.config/lsd" \
     "$USER_HOME/.config/bat" \
     "$USER_HOME/.config/fzf" \
-    "$USER_HOME/.config/htop"
+    "$USER_HOME/.config/btop/themes"
 
 # ---------- uv + pywal ----------
 
@@ -460,9 +460,13 @@ if [[ -f "$SCRIPT_DIR/config/fzf/fzf.zsh" ]]; then
     install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
         "$SCRIPT_DIR/config/fzf/fzf.zsh" "$USER_HOME/.config/fzf/fzf.zsh"
 fi
-if [[ -f "$SCRIPT_DIR/config/htop/htoprc" ]]; then
+if [[ -f "$SCRIPT_DIR/config/btop/btop.conf" ]]; then
     install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
-        "$SCRIPT_DIR/config/htop/htoprc" "$USER_HOME/.config/htop/htoprc"
+        "$SCRIPT_DIR/config/btop/btop.conf" "$USER_HOME/.config/btop/btop.conf"
+fi
+if [[ -f "$SCRIPT_DIR/config/btop/themes/0x0ps-neon.theme" ]]; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$SCRIPT_DIR/config/btop/themes/0x0ps-neon.theme" "$USER_HOME/.config/btop/themes/0x0ps-neon.theme"
 fi
 
 # kitty: copia tutto il contenuto della dir (merge, non annida)
@@ -617,7 +621,7 @@ Next steps:
   1. Al login verifica che sia selezionata la sessione i3 (configurata come predefinita).
   2. Apri una nuova shell zsh; se sei già in una shell aperta, esegui: source ~/.zshrc
      Verifica pywal con: command -v wal
-  3. CLI neon: prova git st, git lg, bat <file>, fzf e htop.
+  3. CLI neon: prova git st, git lg, bat <file>, fzf e btop.
      Se il comando bat non esiste, l'installer configura l'alias verso batcat.
   4. Valida il config i3:  i3 -C -c ~/.config/i3/config
   5. Nel config i3 sostituisci i riferimenti al vecchio terminale:
