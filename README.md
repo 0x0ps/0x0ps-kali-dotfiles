@@ -23,7 +23,8 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 - **Polybar** with custom status modules, including HTB VPN, USB/Ethernet, and target information.
 - **Rofi** application launcher with a custom translucent black theme and acid-green accents (`#A6FF00`).
 - **Rofi Type-5 powermenu** with icon-only controls, black background, and acid-green accents (`#A6FF00`).
-- **Kitty** terminal configuration.
+- **Kitty** terminal configuration with the 0x0ps dark / neon palette.
+- **Neon CLI toolkit:** `lsd`, `bat`, `fzf`, `htop`, and Git color settings / aliases.
 - **tmux** configuration and TPM plugin manager.
 - **SPICE clipboard integration** for compatible virtual machines.
 - **Adaptive SPICE display resolution** for virtual displays exposed by QXL/SPICE.
@@ -98,7 +99,9 @@ acid-green labels, and an acid-green selection highlight.
 - Open a terminal and start tmux. Use `Ctrl+b`, then `Shift+i` to install tmux plugins through TPM.
 - Run `lxappearance` to select a GTK theme such as **Arc-Dark**, if desired.
 - The installer copies the repository wallpaper into `~/.wallpaper` and configures `feh` to use it.
-- Open a new Zsh session to load the updated shell configuration.
+- Open a new Zsh session to load the updated shell configuration and fzf key bindings.
+- CLI tools use the 0x0ps palette: `lsd` for listings, `bat` for syntax-highlighted files, `fzf` for fuzzy search, `htop` for process monitoring, and Git aliases `git st` / `git lg`.
+- The installer copies the managed `lsd`, `bat`, `fzf`, and `htop` configs into `~/.config`. Review local changes before rerunning the installer.
 
 ## i3 keyboard shortcuts
 
