@@ -125,16 +125,16 @@ gaps outer 5
 
 # 0x0ps Neon Matrix window colors
 # class                 border    background text       indicator child_border
-client.focused          #A6FF00   #A6FF00    #000000    #00FFFF   #A6FF00
-client.focused_inactive #151515   #151515    #667066    #00FFFF   #151515
-client.unfocused        #101010   #101010    #D7F7D7    #667066   #101010
+client.focused          #A6FF00   #A6FF00    #000000    #A6FF00   #A6FF00
+client.focused_inactive #FF00AF   #151515    #D7F7D7    #FF00AF   #FF00AF
+client.unfocused        #FF00AF   #101010    #D7F7D7    #FF00AF   #FF00AF
 client.urgent           #FF5C5C   #FF5C5C    #000000    #FF00AF   #FF5C5C
 
 # Startup Applications
 exec --no-startup-id spice-vdagent
 exec --no-startup-id ~/.config/i3/set-resolution.sh
 exec_always --no-startup-id sh ~/.fehbg
-exec_always --no-startup-id picom -b --config ~/.config/compton/compton.conf
+exec_always --no-startup-id picom --config ~/.config/compton/compton.conf --backend xrender --no-use-damage -b
 exec_always --no-startup-id ~/.config/i3/clipboard_fix.sh
 exec --no-startup-id vmware-user-suid-wrapper
 exec --no-startup-id sleep 2 && copyq
