@@ -32,6 +32,7 @@ no=''
 # Rofi CMD
 rofi_cmd() {
 	rofi -dmenu \
+		-markup-rows \
 		-p " $USER@$host" \
 		-mesg "<span foreground='#FF00AF' font_desc='RobotoMono Nerd Font 16'></span> <span foreground='#A6FF00'>Last Login: $lastlogin</span> <span foreground='#00FFFF'>|</span> <span foreground='#00FFFF' font_desc='RobotoMono Nerd Font 16'></span> <span foreground='#A6FF00'>Uptime: $uptime</span>" \
 		-theme ${dir}/${theme}.rasi
