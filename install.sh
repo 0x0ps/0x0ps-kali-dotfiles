@@ -132,7 +132,6 @@ log "Configuring Slick Greeter and LightDM"
 apt-get install -y \
     slick-greeter \
     lightdm \
-    lightdm-gtk-greeter \
     kali-themes \
     kali-themes-common \
     fonts-cantarell \
@@ -147,12 +146,49 @@ else
     warn "Login wallpaper missing: $LOGIN_WALLPAPER"
 fi
 
-# Seleziona Slick Greeter senza modificare la sessione i3.
+# Seleziona Slick Greeter e imposta i3 come sessione predefinita.
 install -d -m 0755 /etc/lightdm/lightdm.conf.d
 cat > /etc/lightdm/lightdm.conf.d/99-null0x-greeter.conf <<'EOF'
 [Seat:*]
 greeter-session=slick-greeter
+user-session=i3
 EOF
+
+# Imposta i3 come sessione predefinita per l'utente.
+DMRC="$USER_HOME/.dmrc"
+if [[ -f "$DMRC" ]]; then
+    TMP_DMRC="$(mktemp)"
+    awk '
+        /^\[/ {
+            if (in_desktop && !found) print "Session=i3"
+            in_desktop = ($0 == "[Desktop]")
+            if (in_desktop) seen = 1
+            print
+            next
+        }
+        in_desktop && /^Session=/ {
+            if (!found) print "Session=i3"
+            found = 1
+            next
+        }
+        { print }
+        END {
+            if (in_desktop && !found) print "Session=i3"
+            if (!seen) {
+                print ""
+                print "[Desktop]"
+                print "Session=i3"
+            }
+        }
+    ' "$DMRC" > "$TMP_DMRC"
+    cat "$TMP_DMRC" > "$DMRC"
+    rm -f "$TMP_DMRC"
+else
+    printf '[Desktop]\nSession=i3\n' > "$DMRC"
+fi
+
+chown "$ACTUAL_USER":"$(id -gn "$ACTUAL_USER")" "$DMRC"
+
 
 # Override locale separato dai file di configurazione dei pacchetti.
 install -d -m 0755 /usr/share/glib-2.0/schemas
@@ -377,64 +413,6 @@ if [[ -d "$SCRIPT_DIR/wallpaper" ]]; then
     cp -a "$SCRIPT_DIR/wallpaper/." "$USER_HOME/.wallpaper/"
 else
     warn "Missing source: $SCRIPT_DIR/wallpaper"
-fi
-
-# ---------- LightDM login-screen wallpaper ----------
-
-# Use the same image as the i3 desktop wallpaper, but install it system-wide
-# because LightDM runs before the user's home directory is available.
-LOGIN_WALLPAPER_SOURCE="$SCRIPT_DIR/wallpaper/wallpaper.png"
-LOGIN_WALLPAPER_DEST="/usr/share/backgrounds/0x0ps-login-wallpaper.png"
-LIGHTDM_GREETER_CONFIG="/etc/lightdm/lightdm-gtk-greeter.conf"
-
-if [[ -f "$LOGIN_WALLPAPER_SOURCE" ]]; then
-    install -D -m 0644 "$LOGIN_WALLPAPER_SOURCE" "$LOGIN_WALLPAPER_DEST"
-
-    mkdir -p "$(dirname "$LIGHTDM_GREETER_CONFIG")"
-    if [[ ! -f "$LIGHTDM_GREETER_CONFIG" ]]; then
-        printf '[greeter]\\nbackground=%s\\n' "$LOGIN_WALLPAPER_DEST" > "$LIGHTDM_GREETER_CONFIG"
-        chmod 0644 "$LIGHTDM_GREETER_CONFIG"
-    else
-        # Update only the [greeter] background setting and preserve other options.
-        TMP_GREETER_CONFIG="$(mktemp)"
-        awk -v bg="$LOGIN_WALLPAPER_DEST" '
-            /^\\[greeter\\][[:space:]]*$/ {
-                if (in_greeter && !found) print "background=" bg
-                in_greeter=1
-                seen=1
-                found=0
-                print
-                next
-            }
-            /^\\[/ {
-                if (in_greeter && !found) print "background=" bg
-                in_greeter=0
-                found=0
-                print
-                next
-            }
-            in_greeter && /^[[:space:]]*background[[:space:]]*=/ {
-                if (!found) print "background=" bg
-                found=1
-                next
-            }
-            { print }
-            END {
-                if (in_greeter && !found) print "background=" bg
-                if (!seen) {
-                    print ""
-                    print "[greeter]"
-                    print "background=" bg
-                }
-            }
-        ' "$LIGHTDM_GREETER_CONFIG" > "$TMP_GREETER_CONFIG"
-        cat "$TMP_GREETER_CONFIG" > "$LIGHTDM_GREETER_CONFIG"
-        rm -f "$TMP_GREETER_CONFIG"
-        chmod 0644 "$LIGHTDM_GREETER_CONFIG"
-    fi
-    log "Configured LightDM login wallpaper: $LOGIN_WALLPAPER_DEST"
-else
-    warn "wallpaper/wallpaper.png not found; skipping LightDM login wallpaper."
 fi
 
 copy_if_exists "$SCRIPT_DIR/config/terminator/config"    "$USER_HOME/.config/terminator/config"
