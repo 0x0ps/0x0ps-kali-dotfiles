@@ -15,27 +15,26 @@ dir="$HOME/.config/rofi/powermenu/type-5"
 theme='style-1'
 
 # CMDs
-lastlogin="`last $USER | head -n1 | tr -s ' ' | cut -d' ' -f5,6,7`"
-uptime="`uptime -p | sed -e 's/up //g'`"
-host=`hostname`
+lastlogin="$(last "$USER" | head -n1 | tr -s ' ' | cut -d' ' -f5,6,7)"
+uptime="$(uptime -p | sed -e 's/up //g')"
+host="$(hostname)"
 
-# Options
-hibernate='󰜗'
+# Options — use classic Font Awesome glyphs supported by Nerd Font builds
+hibernate=''
 shutdown=''
 reboot=''
 lock=''
-suspend='󰒲'
+suspend=''
 logout=''
-yes=''
-no=''
+yes=''
+no=''
 
 # Rofi CMD
 rofi_cmd() {
 	rofi -dmenu \
-		-markup-rows \
-		-p " $USER@$host" \
-		-mesg "<span foreground='#FF00AF' font_desc='RobotoMono Nerd Font 16'></span> <span foreground='#A6FF00'>Last Login: $lastlogin</span> <span foreground='#00FFFF'>|</span> <span foreground='#00FFFF' font_desc='RobotoMono Nerd Font 16'></span> <span foreground='#A6FF00'>Uptime: $uptime</span>" \
-		-theme ${dir}/${theme}.rasi
+		-p " $USER@$host" \
+		-mesg " Last Login: $lastlogin  |   Uptime: $uptime" \
+		-theme "${dir}/${theme}.rasi"
 }
 
 # Confirmation CMD
@@ -48,17 +47,17 @@ confirm_cmd() {
 		-dmenu \
 		-p 'Confirmation' \
 		-mesg 'Are you Sure?' \
-		-theme ${dir}/${theme}.rasi
+		-theme "${dir}/${theme}.rasi"
 }
 
 # Ask for confirmation
 confirm_exit() {
-	echo -e "$yes\n$no" | confirm_cmd
+	printf '%s\n%s\n' "$yes" "$no" | confirm_cmd
 }
 
-# Pass variables to rofi dmenu
+# Pass variables to Rofi dmenu
 run_rofi() {
-	echo -e "$lock\n$suspend\n$logout\n$hibernate\n$reboot\n$shutdown" | rofi_cmd
+	printf '%s\n' "$lock" "$suspend" "$logout" "$hibernate" "$reboot" "$shutdown" | rofi_cmd
 }
 
 # Execute Command
@@ -93,27 +92,27 @@ run_cmd() {
 
 # Actions
 chosen="$(run_rofi)"
-case ${chosen} in
-    $shutdown)
+case "$chosen" in
+	"$shutdown")
 		run_cmd --shutdown
-        ;;
-    $reboot)
+		;;
+	"$reboot")
 		run_cmd --reboot
-        ;;
-    $hibernate)
+		;;
+	"$hibernate")
 		run_cmd --hibernate
-        ;;
-    $lock)
+		;;
+	"$lock")
 		if [[ -x '/usr/bin/betterlockscreen' ]]; then
 			betterlockscreen -l
 		elif [[ -x '/usr/bin/i3lock' ]]; then
 			i3lock
 		fi
-        ;;
-    $suspend)
+		;;
+	"$suspend")
 		run_cmd --suspend
-        ;;
-    $logout)
+		;;
+	"$logout")
 		run_cmd --logout
-        ;;
+		;;
 esac
