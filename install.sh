@@ -416,18 +416,6 @@ else
         "$USER_HOME/.tmux/plugins/tpm"
 fi
 
-# ---------- tmux-themepack ----------
-
-log "Installing tmux-themepack"
-
-if [[ -d "$USER_HOME/.tmux-themepack/.git" ]]; then
-    run_as_user git -C "$USER_HOME/.tmux-themepack" pull --ff-only
-else
-    rm -rf "$USER_HOME/.tmux-themepack"
-    run_as_user git clone https://github.com/jimeh/tmux-themepack.git \
-        "$USER_HOME/.tmux-themepack"
-fi
-
 # ---------- Configuration ----------
 
 log "Installing 0x0ps configuration"
@@ -554,17 +542,6 @@ for f in \
 do
     if [[ -f "$f" ]]; then chmod +x "$f"; fi
 done
-
-# ---------- Rofi theme ----------
-
-log "Installing Nord Rofi theme"
-
-ROFI_THEME_URL="https://raw.githubusercontent.com/undiabler/nord-rofi-theme/master/nord.rasi"
-ROFI_THEME_DIR="/usr/share/rofi/themes"
-
-mkdir -p "$ROFI_THEME_DIR"
-curl -fL "$ROFI_THEME_URL" -o "$ROFI_THEME_DIR/nord.rasi" || \
-    warn "Could not download Nord rofi theme (non fatal)."
 
 # ---------- Ownership (rete di sicurezza) ----------
 
