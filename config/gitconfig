@@ -1,16 +1,16 @@
 [color]
 	ui = auto
-[ color "branch" ]
+[color "branch"]
 	current = yellow bold
 	local = brightgreen
 	remote = brightcyan
-[ color "diff" ]
+[color "diff"]
 	meta = brightcyan bold
 	frag = brightmagenta bold
 	old = brightred bold
 	new = brightgreen bold
 	commit = brightyellow bold
-[ color "status" ]
+[color "status"]
 	added = brightgreen
 	changed = brightmagenta
 	untracked = brightcyan
