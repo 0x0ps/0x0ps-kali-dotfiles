@@ -259,7 +259,10 @@ done
 
 if [[ -n "$UV_BIN" ]]; then
     log "Installing pywal with uv"
-    run_as_user "$UV_BIN" tool install pywal
+    # Rendi uv e i tool installati visibili anche durante questa esecuzione,
+    # senza dipendere dal PATH della shell che ha lanciato l'installer.
+    run_as_user env PATH="$USER_HOME/.local/bin:$USER_HOME/.cargo/bin:$PATH" \
+        "$UV_BIN" tool install pywal
 else
     warn "uv executable not found. Skipping pywal installation."
 fi
@@ -515,8 +518,6 @@ fix_owner \
 
 # ---------- GNOME Terminal (dconf) ----------
 
-# ---------- GNOME Terminal (dconf) ----------
-
 GNOME_BACKUP="$SCRIPT_DIR/config/gnome_terminal_settings_backup.txt"
 
 if [[ -f "$GNOME_BACKUP" ]]; then
@@ -551,8 +552,9 @@ Home:    $USER_HOME
 Source:  $SCRIPT_DIR
 
 Next steps:
-  1. Logout/login e seleziona i3 al login screen.
-  2. Apri una nuova shell zsh (o: source ~/.zshrc) per avere wal nel PATH.
+  1. Al login verifica che sia selezionata la sessione i3 (configurata come predefinita).
+  2. Apri una nuova shell zsh; se sei già in una shell aperta, esegui: source ~/.zshrc
+     Verifica pywal con: command -v wal
   3. Valida il config i3:  i3 -C -c ~/.config/i3/config
   4. Nel config i3 sostituisci i riferimenti al vecchio terminale:
        grep -nE 'alacritty|terminator' ~/.config/i3/config
