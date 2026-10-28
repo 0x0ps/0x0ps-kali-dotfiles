@@ -32,6 +32,7 @@ no=''
 # Rofi CMD
 rofi_cmd() {
 	rofi -dmenu \
+		-format i \
 		-p " $USER@$host" \
 		-mesg " Last Login: $lastlogin  |   Uptime: $uptime" \
 		-theme "${dir}/${theme}.rasi"
@@ -45,6 +46,7 @@ confirm_cmd() {
 		-theme-str 'element-text {horizontal-align: 0.5;}' \
 		-theme-str 'textbox {horizontal-align: 0.5;}' \
 		-dmenu \
+		-format i \
 		-p 'Confirmation' \
 		-mesg 'Are you Sure?' \
 		-theme "${dir}/${theme}.rasi"
@@ -63,7 +65,7 @@ run_rofi() {
 # Execute Command
 run_cmd() {
 	selected="$(confirm_exit)"
-	if [[ "$selected" == "$yes" ]]; then
+	if [[ "$selected" == "0" ]]; then
 		if [[ $1 == '--shutdown' ]]; then
 			systemctl poweroff
 		elif [[ $1 == '--reboot' ]]; then
@@ -90,29 +92,29 @@ run_cmd() {
 	fi
 }
 
-# Actions
+# Actions — use the selected row index, not the icon glyph returned by Rofi
 chosen="$(run_rofi)"
 case "$chosen" in
-	"$shutdown")
-		run_cmd --shutdown
-		;;
-	"$reboot")
-		run_cmd --reboot
-		;;
-	"$hibernate")
-		run_cmd --hibernate
-		;;
-	"$lock")
+	0)
 		if [[ -x '/usr/bin/betterlockscreen' ]]; then
 			betterlockscreen -l
 		elif [[ -x '/usr/bin/i3lock' ]]; then
 			i3lock
 		fi
 		;;
-	"$suspend")
+	1)
 		run_cmd --suspend
 		;;
-	"$logout")
+	2)
 		run_cmd --logout
+		;;
+	3)
+		run_cmd --hibernate
+		;;
+	4)
+		run_cmd --reboot
+		;;
+	5)
+		run_cmd --shutdown
 		;;
 esac
