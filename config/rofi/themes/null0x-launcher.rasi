@@ -36,7 +36,7 @@ prompt {
 entry {
     text-color: #A6FF00;
     placeholder: "Search applications";
-    placeholder-color: #888888;
+    placeholder-color: #00FFFF;
 }
 
 listview {
