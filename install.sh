@@ -482,7 +482,7 @@ copy_if_exists "$SCRIPT_DIR/config/i3/set-resolution.sh" "$USER_HOME/.config/i3/
 copy_if_exists "$SCRIPT_DIR/config/compton/compton.conf" "$USER_HOME/.config/compton/compton.conf"
 copy_if_exists "$SCRIPT_DIR/config/rofi/config"          "$USER_HOME/.config/rofi/config"
 
-# null0x application launcher (transparent black / acid green)
+# null0x application launcher (transparent background, neon fuchsia border/selection, white selected title)
 LAUNCHER_SOURCE="$SCRIPT_DIR/config/rofi/themes/null0x-launcher.rasi"
 LAUNCHER_DEST="$USER_HOME/.config/rofi/themes/null0x-launcher.rasi"
 if [[ -f "$LAUNCHER_SOURCE" ]]; then
