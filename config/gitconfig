@@ -1,0 +1,22 @@
+[color]
+	ui = auto
+[ color "branch" ]
+	current = yellow bold
+	local = brightgreen
+	remote = brightcyan
+[ color "diff" ]
+	meta = brightcyan bold
+	frag = brightmagenta bold
+	old = brightred bold
+	new = brightgreen bold
+	commit = brightyellow bold
+[ color "status" ]
+	added = brightgreen
+	changed = brightmagenta
+	untracked = brightcyan
+	deleted = brightred
+	branch = brightyellow bold
+[alias]
+	st = status --short --branch
+	lg = log --graph --decorate --oneline --all
+	last = log -1 --stat
