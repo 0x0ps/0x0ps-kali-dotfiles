@@ -6,7 +6,7 @@ export FZF_FILE_LS_COLORS='fi=38;5;46:di=38;5;46:ex=38;5;51:ln=38;5;51:*.sh=38;5
 
 # Use fd-find (named fdfind on Debian/Kali) and preserve ANSI colors.
 if command -v fdfind >/dev/null 2>&1; then
-  export FZF_DEFAULT_COMMAND='env LS_COLORS="$FZF_FILE_LS_COLORS" fdfind --type f --hidden --follow --exclude .git --color=always'
+  export FZF_DEFAULT_COMMAND='env LS_COLORS="$FZF_FILE_LS_COLORS" fdfind --type f --type d --hidden --follow --exclude .git --color=always'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 
