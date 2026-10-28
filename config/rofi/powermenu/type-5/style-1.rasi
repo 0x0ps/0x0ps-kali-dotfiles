@@ -118,7 +118,7 @@ element {
     cursor:                      pointer;
 }
 element-text {
-    font:                        "RobotoMono Nerd Font 12";
+    font:                        "RobotoMono Nerd Font 16";
     background-color:            transparent;
     text-color:                  inherit;
     cursor:                      inherit;
