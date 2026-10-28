@@ -12,10 +12,10 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 # Terminal
 bindsym $mod+Return exec kitty
 
-# Close window (Impostato su Mod4+w)
+# Close window
 bindsym $mod+w kill
 
-# Rofi Powermenu (Win/Super + Esc)
+# Rofi Powermenu
 bindsym $mod+Escape exec --no-startup-id ~/.config/rofi/powermenu/type-5/powermenu.sh
 
 # Browser
@@ -108,30 +108,27 @@ mode "resize" {
     bindsym k resize grow height 10 px or 10 ppt
     bindsym l resize shrink height 10 px or 10 ppt
     bindsym semicolon resize grow width 10 px or 10 ppt
-
     bindsym Left resize shrink width 10 px or 10 ppt
     bindsym Down resize grow height 10 px or 10 ppt
     bindsym Up resize shrink height 10 px or 10 ppt
     bindsym Right resize grow width 10 px or 10 ppt
-
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-
 bindsym $mod+r mode "resize"
 
-# Window borders & Gaps
+# Window borders & gaps
 for_window [class="^.*"] border pixel 2
 default_border pixel 2
 gaps inner 5
 gaps outer 5
 
-# Window Colors
-# class                 border  backgr. text    indicator child_border
-client.focused          #82c8ff #82c8ff #dddddd #82c8ff   #82c8ff
-client.focused_inactive #333333 #333333 #888888 #333333   #333333
-client.unfocused        #333333 #333333 #888888 #333333   #333333
-client.urgent           #900000 #900000 #ffffff #900000   #900000
+# 0x0ps Neon Matrix window colors
+# class                 border    background text       indicator child_border
+client.focused          #A6FF00   #A6FF00    #000000    #00FFFF   #A6FF00
+client.focused_inactive #151515   #151515    #667066    #00FFFF   #151515
+client.unfocused        #101010   #101010    #D7F7D7    #667066   #101010
+client.urgent           #FF5C5C   #FF5C5C    #000000    #FF00AF   #FF5C5C
 
 # Startup Applications
 exec --no-startup-id spice-vdagent
@@ -142,13 +139,10 @@ exec_always --no-startup-id ~/.config/i3/clipboard_fix.sh
 exec --no-startup-id vmware-user-suid-wrapper
 exec --no-startup-id sleep 2 && copyq
 
-# Screenshot & Utility Bindings
+# Screenshot & utility bindings
 bindsym Print exec flameshot gui
-
-# Wallpaper
-
 bindsym $mod+Shift+v exec copyq show
 
-# Floating Rules
+# Floating rules
 for_window [class="CopyQ|copyq"] floating enable
 bindsym $mod+Shift+Return exec --no-startup-id ~/.config/i3/scripts/kitty-3pane.sh
