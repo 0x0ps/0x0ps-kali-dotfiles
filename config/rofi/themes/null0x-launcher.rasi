@@ -6,15 +6,15 @@ configuration {
 * {
     font: "RobotoMono Nerd Font 11";
     foreground: #FFFFFF;
-    background-color: rgba ( 0, 0, 0, 85 % );
+    background-color: transparent;
 }
 
 window {
     width: 760px;
     padding: 18px;
     border: 2px;
-    border-color: #A6FF00;
-    background-color: rgba ( 0, 0, 0, 85 % );
+    border-color: #FF00AF;
+    background-color: transparent;
 }
 
 mainbox {
@@ -25,7 +25,7 @@ mainbox {
 inputbar {
     padding: 12px;
     spacing: 10px;
-    background-color: rgba ( 16, 16, 16, 85 % );
+    background-color: transparent;
     children: [ prompt, entry ];
 }
 
@@ -48,7 +48,7 @@ listview {
 
 element {
     padding: 10px;
-    background-color: rgba ( 16, 16, 16, 75 % );
+    background-color: transparent;
     text-color: #A6FF00;
 }
 
@@ -57,13 +57,13 @@ element normal.normal {
 }
 
 element selected {
-    background-color: #A6FF00;
-    text-color: #000000;
+    background-color: rgba ( 255, 0, 175, 65 % );
+    text-color: #FFFFFF;
 }
 
 element selected.normal {
-    background-color: #A6FF00;
-    text-color: #000000;
+    background-color: rgba ( 255, 0, 175, 65 % );
+    text-color: #FFFFFF;
 }
 
 element-text {
