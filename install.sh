@@ -99,6 +99,7 @@ apt-get install -y \
     lsd \
     bat \
     fzf \
+    fd-find \
     btop \
     papirus-icon-theme \
     imagemagick \
