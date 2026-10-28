@@ -376,8 +376,8 @@ cleartarget() {
 
 # >>> 0x0ps Matrix Prompt >>>
 autoload -Uz colors && colors
-PROMPT='%F{green}┌──(%F{green}%n%F{cyan}㉿%F{cyan}%m%F{green})-[%F{yellow}%~%F{green}]%f
-%F{red}└─%F{green}❯%f '
+PROMPT='%F{#A6FF00}┌──(%F{#A6FF00}%n%F{#00FFFF}㉿%F{#00FFFF}%m%F{#A6FF00})-[%F{#FFFFFF}%~%F{#A6FF00}]
+%F{#A6FF00}└─❯%f '
 # <<< 0x0ps Matrix Prompt <<<
 
 # <<< 0x0ps <<<
@@ -620,11 +620,11 @@ Next steps:
   3. CLI neon: prova git st, git lg, bat <file>, fzf e htop.
      Se il comando bat non esiste, l'installer configura l'alias verso batcat.
   4. Valida il config i3:  i3 -C -c ~/.config/i3/config
-  4. Nel config i3 sostituisci i riferimenti al vecchio terminale:
+  5. Nel config i3 sostituisci i riferimenti al vecchio terminale:
        grep -nE 'alacritty|terminator' ~/.config/i3/config
      con "kitty".
-  5. tmux: apri tmux e premi prefix + I per installare i plugin TPM.
-  6. lxappearance per il tema GTK se serve.
+  6. tmux: apri tmux e premi prefix + I per installare i plugin TPM.
+  7. lxappearance per il tema GTK se serve.
 
 Backup del .zshrc precedente: ~/.zshrc.bak
 ============================================================
