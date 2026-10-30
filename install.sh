@@ -338,6 +338,37 @@ install_zip_font \
 
 run_as_user fc-cache -f
 
+# ---------- Fastfetch ----------
+
+log "Installing 0x0PS Fastfetch configuration"
+
+FASTFETCH_CONFIG_DIR="$USER_HOME/.config/fastfetch"
+FASTFETCH_CONFIG="$FASTFETCH_CONFIG_DIR/config.jsonc"
+FASTFETCH_LOGO_SOURCE="$SCRIPT_DIR/assets/fastfetch/0x0ps.png"
+FASTFETCH_LOGO_DEST="$FASTFETCH_CONFIG_DIR/0x0ps.png"
+
+install -d -m 0755 "$FASTFETCH_CONFIG_DIR"
+
+if [[ -f "$FASTFETCH_CONFIG" ]]; then
+    cp -a "$FASTFETCH_CONFIG" "$FASTFETCH_CONFIG.bak.$(date +%Y%m%d%H%M%S)"
+fi
+
+if [[ -f "$SCRIPT_DIR/config/fastfetch/config.jsonc" ]]; then
+    sed "s|@USER_HOME@|$USER_HOME|g" \
+        "$SCRIPT_DIR/config/fastfetch/config.jsonc" > "$FASTFETCH_CONFIG"
+    chown "$ACTUAL_USER:$ACTUAL_USER" "$FASTFETCH_CONFIG"
+else
+    warn "Fastfetch config template missing; keeping the existing configuration."
+fi
+
+if [[ -f "$FASTFETCH_LOGO_SOURCE" ]]; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+        "$FASTFETCH_LOGO_SOURCE" "$FASTFETCH_LOGO_DEST"
+else
+    warn "0x0PS Fastfetch PNG missing: $FASTFETCH_LOGO_SOURCE"
+    warn "Add assets/fastfetch/0x0ps.png to the repository and rerun the installer."
+fi
+
 # ---------- Shell (zsh) / tmux ----------
 
 log "Installing zsh and tmux configuration"
@@ -389,6 +420,11 @@ export BUN_INSTALL="$HOME/.bun"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Fastfetch on each new interactive Zsh terminal.
+if [[ -o interactive ]] && command -v fastfetch >/dev/null 2>&1; then
+    fastfetch
+fi
 
 # cronologia condivisa tra le sessioni
 setopt inc_append_history share_history
@@ -632,7 +668,9 @@ Next steps:
   1. Al login verifica che sia selezionata la sessione i3 (configurata come predefinita).
   2. Apri una nuova shell zsh; se sei già in una shell aperta, esegui: source ~/.zshrc
      Verifica pywal con: command -v wal
-  3. CLI neon: prova git st, git lg, bat <file>, fzf e btop.
+  3. Fastfetch: il logo 0x0PS viene mostrato automaticamente in ogni nuovo terminale Zsh.
+     Verifica con: fastfetch
+  4. CLI neon: prova git st, git lg, bat <file>, fzf e btop.
      Se il comando bat non esiste, l'installer configura l'alias verso batcat.
   4. Valida il config i3:  i3 -C -c ~/.config/i3/config
   5. Nel config i3 sostituisci i riferimenti al vecchio terminale:
