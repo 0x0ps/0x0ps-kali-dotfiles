@@ -336,6 +336,15 @@ install_zip_font \
     "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/Hack.zip" \
     "Hack.zip" "$LEGACY_FONT_DIR"
 
+# Custom 0x0ps Burp Suite icon font
+BURP_FONT="$SCRIPT_DIR/fonts/0x0ps-burp-icons.ttf"
+if [[ -f "$BURP_FONT" ]]; then
+    install -D -m 0644 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
+        "$BURP_FONT" "$FONT_DIR/0x0ps-burp-icons.ttf"
+else
+    warn "Custom Burp icon font missing: $BURP_FONT"
+fi
+
 run_as_user fc-cache -f
 
 # ---------- Fastfetch ----------
@@ -578,6 +587,15 @@ fi
 
 if [[ -d "$SCRIPT_DIR/config/polybar" ]]; then
     cp -a "$SCRIPT_DIR/config/polybar/." "$USER_HOME/.config/polybar/"
+fi
+
+# Flameshot: use X11 legacy capture to avoid Screenshot Portal timeouts
+if [[ -f "$SCRIPT_DIR/config/flameshot/flameshot.ini" ]]; then
+    install -D -m 0644 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
+        "$SCRIPT_DIR/config/flameshot/flameshot.ini" \
+        "$USER_HOME/.config/flameshot/flameshot.ini"
+else
+    warn "Flameshot configuration missing; keeping the existing user configuration."
 fi
 
 copy_if_exists "$SCRIPT_DIR/fehbg" "$USER_HOME/.fehbg"
