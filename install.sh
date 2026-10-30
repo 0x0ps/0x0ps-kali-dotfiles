@@ -239,7 +239,7 @@ for gtk_css in "$CUSTOM_GTK_THEME/gtk-3.0/gtk.css" \
                "$CUSTOM_GTK_THEME/gtk-3.0/gtk-dark.css"; do
     if ! grep -Fq '@import url("0x0ps.css");' "$gtk_css"; then
         # GTK CSS imports must appear before the theme's other CSS rules.
-        sed -i '1i @import url("0x0ps.css");\n' "$gtk_css"
+        sed -i '1i @import url("0x0ps.css");' "$gtk_css"
     fi
 done
 
