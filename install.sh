@@ -128,7 +128,8 @@ apt-get install -y \
     build-essential \
     xterm \
     spice-vdagent \
-    conky-all
+    conky-all \
+    jq
 
 # Fastfetch is required by the custom configuration and the Zsh startup hook.
 command -v fastfetch >/dev/null 2>&1 || die "Fastfetch installation failed."
