@@ -238,7 +238,7 @@ install -D -m 0644 "$SCRIPT_DIR/config/lightdm/0x0ps.css" \
 for gtk_css in "$CUSTOM_GTK_THEME/gtk-3.0/gtk.css" \
                "$CUSTOM_GTK_THEME/gtk-3.0/gtk-dark.css"; do
     if ! grep -Fq '@import url("0x0ps.css");' "$gtk_css"; then
-        printf '\\n@import url("0x0ps.css");\\n' >> "$gtk_css"
+        printf '\n@import url("0x0ps.css");\n' >> "$gtk_css"
     fi
 done
 
