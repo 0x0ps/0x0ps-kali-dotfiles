@@ -142,10 +142,10 @@ apt-get install -y \
     libglib2.0-bin
 
 # Installa lo stesso sfondo verificato sul sistema attuale.
-LOGIN_WALLPAPER="$SCRIPT_DIR/wallpaper/wallpaper.png"
+LOGIN_WALLPAPER="$SCRIPT_DIR/wallpaper/wallpaper.jpg"
 if [[ -f "$LOGIN_WALLPAPER" ]]; then
     install -D -m 0644 "$LOGIN_WALLPAPER" \
-        /usr/share/backgrounds/0x0ps-login-wallpaper.png
+        /usr/share/backgrounds/0x0ps-login-wallpaper.jpg
 else
     warn "Login wallpaper missing: $LOGIN_WALLPAPER"
 fi
@@ -198,7 +198,7 @@ chown "$ACTUAL_USER":"$(id -gn "$ACTUAL_USER")" "$DMRC"
 install -d -m 0755 /usr/share/glib-2.0/schemas
 cat > /usr/share/glib-2.0/schemas/90_null0x-slick-greeter.gschema.override <<'EOF'
 [x.dm.slick-greeter]
-background='/usr/share/backgrounds/0x0ps-login-wallpaper.png'
+background='/usr/share/backgrounds/0x0ps-login-wallpaper.jpg'
 background-color='#000000'
 draw-user-backgrounds=false
 draw-grid=false
@@ -216,6 +216,18 @@ activate-numlock=true
 EOF
 
 glib-compile-schemas /usr/share/glib-2.0/schemas
+
+# Keep the greeter's explicit configuration aligned with the compiled settings.
+install -d -m 0755 /etc/lightdm
+if [[ -f /etc/lightdm/slick-greeter.conf ]]; then
+    cp -a /etc/lightdm/slick-greeter.conf \
+        "/etc/lightdm/slick-greeter.conf.bak.$(date +%Y%m%d%H%M%S)"
+fi
+cat > /etc/lightdm/slick-greeter.conf <<'GREETER'
+[Greeter]
+background=/usr/share/backgrounds/0x0ps-login-wallpaper.jpg
+draw-user-background=false
+GREETER
 
 log "Slick Greeter configured. Reboot to apply the login-screen changes."
 
