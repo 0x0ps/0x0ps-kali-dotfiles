@@ -122,6 +122,7 @@ for_window [class="^.*"] border pixel 2
 default_border pixel 2
 gaps inner 5
 gaps outer 5
+gaps top 46
 
 # 0x0ps Neon Matrix window colors
 # class                 border    background text       indicator child_border
