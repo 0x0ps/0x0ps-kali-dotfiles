@@ -23,7 +23,7 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 - **Polybar** with custom status modules, including HTB VPN, USB/Ethernet, and target information.
 - **Rofi** application launcher with a custom translucent black theme and acid-green accents (`#A6FF00`).
 - **Rofi Type-5 powermenu** with icon-only controls, black background, and acid-green accents (`#A6FF00`).
-- **Kitty** terminal configuration with the 0x0ps dark / neon palette.
+- **Kitty** terminal configuration with the 0x0ps dark / neon palette.\n- **Fastfetch** with a custom 0x0PS PNG logo, Kitty image rendering, and the fuchsia / cyan / white module palette; it launches automatically in each new interactive Zsh terminal.
 - **Neon CLI toolkit:** `lsd` with acid-green directories (`#A6FF00`), white files, fuchsia executables, and cyan symlinks; plus `bat`, `fzf`, `btop`, and Git color settings / aliases.
 - **tmux** configuration and TPM plugin manager.
 - **SPICE clipboard integration** for compatible virtual machines.
@@ -124,9 +124,9 @@ acid-green labels, and an acid-green selection highlight.
 - Open a terminal and start tmux. Use `Ctrl+b`, then `Shift+i` to install tmux plugins through TPM.
 - Run `lxappearance` to select a GTK theme such as **Arc-Dark**, if desired.
 - The installer copies the repository wallpaper into `~/.wallpaper` and configures `feh` to use it.
-- Open a new Zsh session to load the updated shell configuration and fzf key bindings.
+- Open a new Zsh session to load the updated shell configuration and fzf key bindings. Fastfetch runs automatically in each new interactive Zsh terminal and displays the repository's `assets/fastfetch/0x0ps.png` logo.
 - CLI tools use the 0x0ps palette: `lsd` for listings (acid-green directories `#A6FF00`, white files, fuchsia executables, cyan symlinks), `bat` for syntax-highlighted files, `fzf` for fuzzy search, `btop` for process monitoring, and Git aliases `git st` / `git lg`.
-- The installer copies the managed `lsd`, `bat`, `fzf`, and `btop` configs into `~/.config`. Review local changes before rerunning the installer.
+- The installer copies the managed `fastfetch`, `lsd`, `bat`, `fzf`, and `btop` configs into `~/.config`. Review local changes before rerunning the installer.
 
 ## i3 keyboard shortcuts
 
