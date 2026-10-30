@@ -132,7 +132,7 @@ client.urgent           #FF5C5C   #FF5C5C    #000000    #FF00AF   #FF5C5C
 
 # Startup Applications
 exec --no-startup-id spice-vdagent
-exec --no-startup-id ~/.config/i3/set-resolution.sh
+exec --no-startup-id ~/.config/i3/set-resolution-vmware.sh
 exec_always --no-startup-id sh ~/.fehbg
 exec_always --no-startup-id picom --config ~/.config/compton/compton.conf --backend xrender --no-use-damage -b
 exec_always --no-startup-id ~/.config/i3/clipboard_fix.sh
