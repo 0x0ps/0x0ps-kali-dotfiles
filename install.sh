@@ -74,8 +74,15 @@ export DEBIAN_FRONTEND=noninteractive
 
 # ---------- Packages ----------
 
-log "Updating APT"
+# ---------- System update ----------
+
+log "Refreshing APT package indexes"
 apt-get update
+
+log "Applying full Kali Linux system upgrade"
+apt-get full-upgrade -y
+
+# ---------- Packages ----------
 
 log "Installing 0x0ps dependencies"
 
@@ -96,6 +103,7 @@ apt-get install -y \
     unclutter \
     cargo \
     picom \
+    fastfetch \
     lsd \
     bat \
     fzf \
@@ -122,6 +130,9 @@ apt-get install -y \
     build-essential \
     xterm \
     spice-vdagent
+
+# Fastfetch is required by the custom configuration and the Zsh startup hook.
+command -v fastfetch >/dev/null 2>&1 || die "Fastfetch installation failed."
 
 # kitty come x-terminal-emulator (non fatale)
 if [[ -x /usr/bin/kitty ]]; then
