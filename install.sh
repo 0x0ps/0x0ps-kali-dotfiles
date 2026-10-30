@@ -439,11 +439,6 @@ export BUN_INSTALL="$HOME/.bun"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-# Fastfetch on each new interactive Zsh terminal.
-if [[ -o interactive ]] && command -v fastfetch >/dev/null 2>&1; then
-    fastfetch
-fi
-
 # cronologia condivisa tra le sessioni
 setopt inc_append_history share_history
 
