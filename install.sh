@@ -127,7 +127,8 @@ apt-get install -y \
     fontconfig \
     build-essential \
     xterm \
-    spice-vdagent
+    spice-vdagent \
+    conky-all
 
 # Fastfetch is required by the custom configuration and the Zsh startup hook.
 command -v fastfetch >/dev/null 2>&1 || die "Fastfetch installation failed."
@@ -430,6 +431,52 @@ else
 fi
 
 run_as_user fc-cache -f
+
+# ---------- VictorConky (0x0ps desktop HUD) ----------
+
+log "Installing and configuring VictorConky"
+
+VICTORCONKY_TMP="$CACHE_DIR/victorconky-src"
+VICTORCONKY_DIR="$USER_HOME/.conky/victorConky"
+VICTOR_FONT_DIR="$FONT_DIR/victorconky"
+CONKY_CONFIG_DIR="$USER_HOME/.config/conky"
+CONKY_CONFIG_SOURCE="$SCRIPT_DIR/config/conky/victorconky-medium.conf"
+CONKY_CONFIG_DEST="$CONKY_CONFIG_DIR/victorconky-medium.conf"
+VICTOR_REPO="https://github.com/Gictorbit/victorconky.git"
+
+# Fetch upstream assets (PNG artwork + Zekton/Chinacat fonts).
+rm -rf "$VICTORCONKY_TMP"
+run_as_user git clone --depth 1 "$VICTOR_REPO" "$VICTORCONKY_TMP"
+
+install -d -m 0755 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
+    "$VICTORCONKY_DIR" "$VICTOR_FONT_DIR" "$CONKY_CONFIG_DIR"
+
+if [[ -f "$VICTORCONKY_TMP/victorConky/LinuxMedium.png" ]]; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
+        "$VICTORCONKY_TMP/victorConky/LinuxMedium.png" \
+        "$VICTORCONKY_DIR/LinuxMedium.png"
+else
+    die "VictorConky LinuxMedium.png was not found in the upstream repository."
+fi
+
+if compgen -G "$VICTORCONKY_TMP/fonts/*.ttf" > /dev/null; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
+        "$VICTORCONKY_TMP"/fonts/*.ttf "$VICTOR_FONT_DIR/"
+else
+    die "VictorConky font files were not found in the upstream repository."
+fi
+
+if [[ -f "$CONKY_CONFIG_SOURCE" ]]; then
+    install -m 0644 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
+        "$CONKY_CONFIG_SOURCE" "$CONKY_CONFIG_DEST"
+else
+    die "Missing version-controlled Conky configuration: $CONKY_CONFIG_SOURCE"
+fi
+
+run_as_user fc-cache -f
+rm -rf "$VICTORCONKY_TMP"
+
+log "VictorConky installed. It will start automatically with i3."
 
 # ---------- Fastfetch ----------
 
