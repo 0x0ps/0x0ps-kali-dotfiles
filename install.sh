@@ -547,10 +547,16 @@ else
     warn "Missing source: $SCRIPT_DIR/config/kitty"
 fi
 
-# wallpaper: idem, evita ~/.wallpaper/wallpaper se la dir esiste già
+# wallpaper: copia gli asset e imposta esplicitamente il JPG verificato per il desktop.
 if [[ -d "$SCRIPT_DIR/wallpaper" ]]; then
-    mkdir -p "$USER_HOME/.wallpaper"
+    install -d -m 0755 "$USER_HOME/.wallpaper"
     cp -a "$SCRIPT_DIR/wallpaper/." "$USER_HOME/.wallpaper/"
+    if [[ -f "$SCRIPT_DIR/wallpaper/wallpaper.jpg" ]]; then
+        install -m 0644 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
+            "$SCRIPT_DIR/wallpaper/wallpaper.jpg" "$USER_HOME/.wallpaper/wallpaper.jpg"
+    else
+        warn "Desktop wallpaper missing: $SCRIPT_DIR/wallpaper/wallpaper.jpg"
+    fi
 else
     warn "Missing source: $SCRIPT_DIR/wallpaper"
 fi
@@ -690,8 +696,8 @@ Next steps:
   1. Al login verifica che sia selezionata la sessione i3 (configurata come predefinita).
   2. Apri una nuova shell zsh; se sei già in una shell aperta, esegui: source ~/.zshrc
      Verifica pywal con: command -v wal
-  3. Fastfetch: il logo 0x0PS viene mostrato automaticamente in ogni nuovo terminale Zsh.
-     Verifica con: fastfetch
+  3. Fastfetch: configurazione e logo 0x0PS installati.
+     Avvialo manualmente con: fastfetch
   4. CLI neon: prova git st, git lg, bat <file>, fzf e btop.
      Se il comando bat non esiste, l'installer configura l'alias verso batcat.
   4. Valida il config i3:  i3 -C -c ~/.config/i3/config
