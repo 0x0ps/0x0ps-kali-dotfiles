@@ -30,6 +30,7 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 - **Adaptive SPICE display resolution** for virtual displays exposed by QXL/SPICE.
 - Wallpaper setup using `feh`.
 - **Matching login-screen wallpaper** for LightDM / Slick Greeter, installed from `wallpaper/wallpaper.jpg`.
+- **Custom 0x0PS Slick Greeter theme** with white text, acid-green focus accents (`#A6FF00`), and neon-fuchsia borders (`#FF00AF`).
 - Utility scripts for network status and target tracking.
 - Optional pywal support.
 
@@ -88,6 +89,11 @@ The same image is used as the Slick Greeter background. It is copied to a system
 location because the greeter cannot read files inside a user home directory with private
 (`0700`) permissions. The installer updates the Slick Greeter settings and keeps a timestamped
 backup of an existing `/etc/lightdm/slick-greeter.conf`.
+
+The installer also creates an independent GTK theme named `0x0PS-Greeter` by copying Kali-Dark
+and applying the repository stylesheet at `config/lightdm/0x0ps.css`. The original Kali-Dark
+theme is left untouched. Slick Greeter uses the custom theme for its login controls; the
+wallpaper remains unchanged.
 
 To change the login wallpaper, replace `wallpaper/wallpaper.jpg` in the repository with your
 own image (keeping that filename), then review and rerun the installer. Back up local changes
