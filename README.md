@@ -122,8 +122,12 @@ These shortcuts reflect the key bindings in this repository's current `config/i3
 | `Mod + Space` | Switch focus between tiled and floating windows |
 | `Mod + a` | Focus the parent container |
 | `Print` | Open Flameshot for a screenshot |
-| `Mod + Shift + v` | Show CopyQ clipboard history |
 | `Mod + Shift + Enter` | Run the Kitty three-pane script |
+| `Alt + Shift + H` | Create a side-by-side split inside Kitty |
+| `Alt + Shift + V` | Create a top/bottom split inside Kitty |
+| `Alt + Shift + W` | Close the active Kitty split/window |
+| `Ctrl + ← / → / ↑ / ↓` (in Kitty) | Move focus between Kitty splits |
+| `Ctrl + Shift + F5` (in Kitty) | Reload Kitty configuration |
 
 ### Move focus and windows
 
@@ -172,6 +176,8 @@ While in resize mode:
 | `Mod + Shift + r` | Restart i3 |
 | `Mod + Shift + e` | Show the i3 exit confirmation |
 | `Mod + Esc` | Open the Rofi power menu (choose an action, then confirm) |
+
+> **Kitty split note:** Kitty's `Alt + Shift + H` and `Alt + Shift + V` create internal splits; these are separate from i3's `Mod + h` / `Mod + v` window splits. The CopyQ `Mod + Shift + v` binding is intentionally disabled to avoid intercepting the Kitty shortcut on Alt-based Mod configurations.
 
 > **Tip:** `Mod + Esc` opens the Rofi power menu. Power off, reboot, suspend, hibernate, and logout require a second confirmation. Press `Esc` to close the menu without taking action. Shortcuts can differ if you edit your local i3 configuration.
 
@@ -235,6 +241,20 @@ Reload i3:
 
 ```bash
 i3-msg reload
+```
+
+Validate the i3 configuration before reloading:
+
+```bash
+i3 -C -c ~/.config/i3/config
+```
+
+Reload Kitty configuration from inside Kitty with `Ctrl+Shift+F5`.
+
+Inspect the relevant i3 bindings:
+
+```bash
+grep -nE 'copyq show|split v' ~/.config/i3/config
 ```
 
 Inspect display modes:
