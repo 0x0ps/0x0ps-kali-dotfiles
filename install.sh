@@ -368,7 +368,7 @@ cat >> "$ZSHRC" <<'ZSHBLOCK'
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
 # 0x0ps neon command-line palette
-export LS_COLORS='di=38;5;201:ln=38;5;51:pi=38;5;51:so=38;5;51:bd=38;5;45:cd=38;5;45:ex=38;5;46:fi=38;5;255:or=38;5;196:mi=38;5;196'
+export LS_COLORS='di=38;2;166;255;0:ln=38;2;0;220;255:pi=38;2;0;220;255:so=38;2;0;220;255:bd=38;2;0;220;255:cd=38;2;0;220;255:ex=38;2;255;0;175:fi=38;2;255;255;255:or=38;2;255;0;0:mi=38;2;255;0;0'
 export BAT_THEME="Monokai Extended"
 
 alias ls='lsd --color=always'
