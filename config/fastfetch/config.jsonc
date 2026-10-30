@@ -14,21 +14,30 @@
   },
   "modules": [
     { "type": "title", "format": "{user-name}@{host-name}" },
-    { "type": "separator", "string": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━" },
+    { "type": "separator", "string": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" },
+
+    { "type": "separator", "string": "▌ IDENTITY" },
     { "type": "os", "key": "OS", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
     { "type": "host", "key": "HOST", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
     { "type": "kernel", "key": "KERNEL", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
     { "type": "uptime", "key": "UPTIME", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
     { "type": "packages", "key": "PACKAGES", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
     { "type": "shell", "key": "SHELL", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
-    { "type": "display", "key": "DISPLAY", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
-    { "type": "de", "key": "DE", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
-    { "type": "wm", "key": "WM", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
-    { "type": "terminal", "key": "TERMINAL", "keyColor": "#FF00AF", "outputColor": "#FFFFFF" },
-    { "type": "cpu", "key": "CPU", "keyColor": "#00DCFF", "outputColor": "#FFFFFF" },
-    { "type": "gpu", "key": "GPU", "keyColor": "#00DCFF", "outputColor": "#FFFFFF" },
-    { "type": "memory", "key": "MEMORY", "keyColor": "#00DCFF", "outputColor": "#FFFFFF" },
-    { "type": "disk", "key": "DISK", "keyColor": "#00DCFF", "outputColor": "#FFFFFF" },
+
+    { "type": "break" },
+    { "type": "separator", "string": "▌ ENVIRONMENT" },
+    { "type": "display", "key": "DISPLAY", "keyColor": "#00DCFF", "outputColor": "#FFFFFF" },
+    { "type": "de", "key": "DESKTOP", "keyColor": "#00DCFF", "outputColor": "#FFFFFF" },
+    { "type": "wm", "key": "WINDOW MANAGER", "keyColor": "#00DCFF", "outputColor": "#FFFFFF" },
+    { "type": "terminal", "key": "TERMINAL", "keyColor": "#00DCFF", "outputColor": "#FFFFFF" },
+
+    { "type": "break" },
+    { "type": "separator", "string": "▌ HARDWARE" },
+    { "type": "cpu", "key": "CPU", "keyColor": "#A6FF00", "outputColor": "#FFFFFF" },
+    { "type": "gpu", "key": "GPU", "keyColor": "#A6FF00", "outputColor": "#FFFFFF" },
+    { "type": "memory", "key": "MEMORY", "keyColor": "#A6FF00", "outputColor": "#FFFFFF" },
+    { "type": "disk", "key": "DISK", "keyColor": "#A6FF00", "outputColor": "#FFFFFF" },
+
     { "type": "break" },
     { "type": "colors" }
   ]
