@@ -24,7 +24,7 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 - **Rofi** application launcher with a custom translucent black theme and acid-green accents (`#A6FF00`).
 - **Rofi Type-5 powermenu** with icon-only controls, black background, and acid-green accents (`#A6FF00`).
 - **Kitty** terminal configuration with the 0x0ps dark / neon palette.
-- **Neon CLI toolkit:** `lsd`, `bat`, `fzf`, `btop`, and Git color settings / aliases.
+- **Neon CLI toolkit:** `lsd` with acid-green directories (`#A6FF00`), white files, fuchsia executables, and cyan symlinks; plus `bat`, `fzf`, `btop`, and Git color settings / aliases.
 - **tmux** configuration and TPM plugin manager.
 - **SPICE clipboard integration** for compatible virtual machines.
 - **Adaptive SPICE display resolution** for virtual displays exposed by QXL/SPICE.
@@ -125,7 +125,7 @@ acid-green labels, and an acid-green selection highlight.
 - Run `lxappearance` to select a GTK theme such as **Arc-Dark**, if desired.
 - The installer copies the repository wallpaper into `~/.wallpaper` and configures `feh` to use it.
 - Open a new Zsh session to load the updated shell configuration and fzf key bindings.
-- CLI tools use the 0x0ps palette: `lsd` for listings, `bat` for syntax-highlighted files, `fzf` for fuzzy search, `btop` for process monitoring, and Git aliases `git st` / `git lg`.
+- CLI tools use the 0x0ps palette: `lsd` for listings (acid-green directories `#A6FF00`, white files, fuchsia executables, cyan symlinks), `bat` for syntax-highlighted files, `fzf` for fuzzy search, `btop` for process monitoring, and Git aliases `git st` / `git lg`.
 - The installer copies the managed `lsd`, `bat`, `fzf`, and `btop` configs into `~/.config`. Review local changes before rerunning the installer.
 
 ## i3 keyboard shortcuts
