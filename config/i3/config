@@ -142,7 +142,8 @@ exec --no-startup-id sleep 2 && copyq
 
 # Screenshot & utility bindings
 bindsym Print exec flameshot gui
-bindsym $mod+Shift+v exec copyq show
+# Disabled: this conflicts with Kitty Alt+Shift+V splits on Alt-based Mod configurations.
+# bindsym $mod+Shift+v exec copyq show
 
 # Floating rules
 for_window [class="CopyQ|copyq"] floating enable
