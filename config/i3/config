@@ -119,6 +119,8 @@ bindsym $mod+r mode "resize"
 
 # Window borders & gaps
 for_window [class="^.*"] border pixel 2
+# VictorConky is a transparent desktop HUD: remove only its i3 frame.
+for_window [class="conky"] border pixel 0
 default_border pixel 2
 gaps inner 5
 gaps outer 5
@@ -131,6 +133,8 @@ client.unfocused        #FF00AF   #101010    #D7F7D7    #FF00AF   #FF00AF
 client.urgent           #FF5C5C   #FF5C5C    #000000    #FF00AF   #FF5C5C
 
 # Startup Applications
+# 0x0ps VictorConky desktop HUD
+exec --no-startup-id conky -c ~/.config/conky/victorconky-medium.conf
 exec --no-startup-id spice-vdagent
 exec --no-startup-id ~/.config/i3/set-resolution-vmware.sh
 exec_always --no-startup-id sh ~/.fehbg
