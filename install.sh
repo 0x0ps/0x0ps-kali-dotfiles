@@ -763,6 +763,11 @@ do
     if [[ -f "$f" ]]; then chmod +x "$f"; fi
 done
 
+# Kitty floating resize helper
+if [[ -f "$USER_HOME/.config/i3/scripts/kitty-resize-mode.sh" ]]; then
+    chmod +x "$USER_HOME/.config/i3/scripts/kitty-resize-mode.sh"
+fi
+
 # ---------- Ownership (rete di sicurezza) ----------
 
 log "Fixing ownership"
