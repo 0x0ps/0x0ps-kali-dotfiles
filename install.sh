@@ -198,7 +198,7 @@ fd, temporary = tempfile.mkstemp(prefix=".policies-", dir=directory, text=True)
 try:
     with os.fdopen(fd, "w", encoding="utf-8") as output:
         json.dump(data, output, indent=2)
-        output.write("\\n")
+        output.write("\n")
     os.chmod(temporary, 0o644)
     os.replace(temporary, path)
 finally:
