@@ -29,6 +29,7 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 - **SPICE clipboard integration** for compatible virtual machines.
 - **Adaptive SPICE display resolution** for virtual displays exposed by QXL/SPICE.
 - Wallpaper setup using `feh`.
+- **Matching login-screen wallpaper** for LightDM / Slick Greeter, installed from `wallpaper/wallpaper.jpg`.
 - Utility scripts for network status and target tracking.
 - Optional pywal support.
 
@@ -73,6 +74,24 @@ sudo ./install.sh
 ```
 
 Use `sudo` as shown so the installer can install system packages. The script attempts to identify the normal desktop user and install user configuration into that account's home directory. Run it from the cloned repository directory.
+
+### Login-screen wallpaper
+
+The installer also configures LightDM with **Slick Greeter** and installs the repository image
+`wallpaper/wallpaper.jpg` as:
+
+```text
+/usr/share/backgrounds/0x0ps-login-wallpaper.jpg
+```
+
+The same image is used as the Slick Greeter background. It is copied to a system-readable
+location because the greeter cannot read files inside a user home directory with private
+(`0700`) permissions. The installer updates the Slick Greeter settings and keeps a timestamped
+backup of an existing `/etc/lightdm/slick-greeter.conf`.
+
+To change the login wallpaper, replace `wallpaper/wallpaper.jpg` in the repository with your
+own image (keeping that filename), then review and rerun the installer. Back up local changes
+before rerunning it.
 
 ### 4. Reboot and choose i3
 
@@ -308,7 +327,8 @@ Confirm that a connected `Virtual-*` output appears and that the script is runni
 Check that the image exists:
 
 ```bash
-ls -l ~/.wallpaper/wallpaper.png
+ls -l /usr/share/backgrounds/0x0ps-login-wallpaper.jpg
+ls -l ~/.wallpaper/wallpaper.jpg
 ```
 
 If you use a different image, update `~/.fehbg` or the wallpaper path used by your configuration.
