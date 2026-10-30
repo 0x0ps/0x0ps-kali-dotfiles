@@ -72,8 +72,6 @@ cd "$SCRIPT_DIR"
 
 export DEBIAN_FRONTEND=noninteractive
 
-# ---------- Packages ----------
-
 # ---------- System update ----------
 
 log "Refreshing APT package indexes"
