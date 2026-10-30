@@ -641,7 +641,7 @@ copy_if_exists "$SCRIPT_DIR/config/terminator/config"    "$USER_HOME/.config/ter
 copy_if_exists "$SCRIPT_DIR/config/i3/config"            "$USER_HOME/.config/i3/config"
 copy_if_exists "$SCRIPT_DIR/config/i3/i3blocks.conf"     "$USER_HOME/.config/i3/i3blocks.conf"
 copy_if_exists "$SCRIPT_DIR/config/i3/clipboard_fix.sh"  "$USER_HOME/.config/i3/clipboard_fix.sh"
-copy_if_exists "$SCRIPT_DIR/config/i3/set-resolution.sh" "$USER_HOME/.config/i3/set-resolution.sh"
+copy_if_exists "$SCRIPT_DIR/config/i3/set-resolution-vmware.sh" "$USER_HOME/.config/i3/set-resolution-vmware.sh"
 copy_if_exists "$SCRIPT_DIR/config/compton/compton.conf" "$USER_HOME/.config/compton/compton.conf"
 copy_if_exists "$SCRIPT_DIR/config/rofi/config"          "$USER_HOME/.config/rofi/config"
 
@@ -706,7 +706,7 @@ fi
 
 for f in \
     "$USER_HOME/.config/polybar/launch.sh" \
-    "$USER_HOME/.config/i3/set-resolution.sh" \
+    "$USER_HOME/.config/i3/set-resolution-vmware.sh" \
     "$USER_HOME/.config/i3/clipboard_fix.sh" \
     "$USER_HOME/.config/i3/scripts/kitty-3pane.sh" \
     "$USER_HOME/.config/rofi/powermenu/type-5/powermenu.sh" \
