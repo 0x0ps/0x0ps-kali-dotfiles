@@ -1,0 +1,74 @@
+/* ==========================================
+   0x0PS NEON LOGIN
+   Acid Green: #A6FF00
+   Neon Fuchsia: #FF00AF
+   Bright White: #FFFFFF
+   ========================================== */
+
+/* General text */
+label {
+    color: #FFFFFF;
+}
+
+/* Text fields */
+entry {
+    color: #FFFFFF;
+    caret-color: #A6FF00;
+    background-color: rgba(10, 10, 14, 0.88);
+    border: 1px solid #FF00AF;
+    border-radius: 3px;
+    padding: 8px;
+    box-shadow: none;
+}
+
+/* Focused text fields */
+entry:focus {
+    color: #FFFFFF;
+    caret-color: #A6FF00;
+    border: 2px solid #A6FF00;
+    box-shadow: 0 0 5px #A6FF00;
+}
+
+/* Buttons */
+button {
+    color: #FFFFFF;
+    background-color: rgba(10, 10, 14, 0.90);
+    border: 1px solid #FF00AF;
+    border-radius: 3px;
+    box-shadow: none;
+}
+
+/* Button hover */
+button:hover {
+    color: #A6FF00;
+    border: 1px solid #A6FF00;
+    background-color: rgba(20, 25, 15, 0.95);
+}
+
+/* Pressed buttons */
+button:active,
+button:checked {
+    color: #000000;
+    background-color: #A6FF00;
+    border-color: #A6FF00;
+}
+
+/* Selected text */
+entry selection,
+label selection {
+    color: #000000;
+    background-color: #A6FF00;
+}
+
+/* Checkboxes and radio buttons */
+check,
+radio {
+    color: #A6FF00;
+    border-color: #FF00AF;
+}
+
+check:checked,
+radio:checked {
+    background-color: #A6FF00;
+    color: #000000;
+}
