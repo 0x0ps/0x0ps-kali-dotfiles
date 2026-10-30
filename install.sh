@@ -138,6 +138,81 @@ if [[ -x /usr/bin/kitty ]]; then
         warn "Could not set kitty as x-terminal-emulator (non fatal)."
 fi
 
+# ---------- Firefox theme: Cyberpunk Neon Rain ----------
+
+log "Configuring the Cyberpunk theme for Firefox"
+
+FIREFOX_BIN=""
+for candidate in firefox-esr firefox; do
+    if command -v "$candidate" >/dev/null 2>&1; then
+        FIREFOX_BIN="$(command -v "$candidate")"
+        break
+    fi
+done
+
+if [[ -n "$FIREFOX_BIN" ]]; then
+    # Resolve the AMO add-on GUID from Mozilla's API, then use Firefox's
+    # enterprise policy to install the theme for the normal desktop user.
+    FIREFOX_THEME_GUID="$(python3 - <<'PY'
+import json
+import urllib.request
+
+url = "https://addons.mozilla.org/api/v5/addons/addon/cyberpunk-neon-rain/"
+request = urllib.request.Request(url, headers={"User-Agent": "0x0ps-Kali-Installer/1.0"})
+with urllib.request.urlopen(request, timeout=20) as response:
+    data = json.load(response)
+guid = data.get("guid")
+if not isinstance(guid, str) or not guid.strip():
+    raise SystemExit("Mozilla AMO API did not return a valid add-on GUID.")
+print(guid.strip())
+PY
+    )" || FIREFOX_THEME_GUID=""
+
+    if [[ -n "$FIREFOX_THEME_GUID" ]]; then
+        FIREFOX_POLICY_DIR="/etc/firefox/policies"
+        FIREFOX_POLICY="$FIREFOX_POLICY_DIR/policies.json"
+        install -d -m 0755 "$FIREFOX_POLICY_DIR"
+
+        # Merge with an existing Firefox policy file instead of replacing it.
+        python3 - "$FIREFOX_POLICY" "$FIREFOX_THEME_GUID" <<'PY'
+import json
+import os
+import sys
+import tempfile
+
+path, guid = sys.argv[1], sys.argv[2]
+data = {}
+if os.path.exists(path):
+    with open(path, encoding="utf-8") as source:
+        data = json.load(source)
+
+policies = data.setdefault("policies", {})
+settings = policies.setdefault("ExtensionSettings", {})
+settings[guid] = {
+    "installation_mode": "normal_installed",
+    "install_url": "https://addons.mozilla.org/firefox/downloads/latest/cyberpunk-neon-rain/latest.xpi"
+}
+
+directory = os.path.dirname(path)
+fd, temporary = tempfile.mkstemp(prefix=".policies-", dir=directory, text=True)
+try:
+    with os.fdopen(fd, "w", encoding="utf-8") as output:
+        json.dump(data, output, indent=2)
+        output.write("\\n")
+    os.chmod(temporary, 0o644)
+    os.replace(temporary, path)
+finally:
+    if os.path.exists(temporary):
+        os.unlink(temporary)
+PY
+        log "Firefox Cyberpunk theme policy installed. Firefox will apply it at next startup."
+    else
+        warn "Could not retrieve the Cyberpunk theme ID from Mozilla AMO; skipping automatic theme installation."
+    fi
+else
+    warn "Firefox was not found; skipping Cyberpunk theme installation."
+fi
+
 # ---------- Slick Greeter / LightDM ----------
 
 log "Configuring Slick Greeter and LightDM"
