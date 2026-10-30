@@ -202,7 +202,7 @@ background='/usr/share/backgrounds/0x0ps-login-wallpaper.jpg'
 background-color='#000000'
 draw-user-backgrounds=false
 draw-grid=false
-theme-name='Kali-Green-Dark'
+theme-name='0x0PS-Greeter'
 icon-theme-name='Flat-Remix-Green-Dark'
 font-name='Cantarell 11'
 show-clock=true
@@ -223,8 +223,28 @@ if [[ -f /etc/lightdm/slick-greeter.conf ]]; then
     cp -a /etc/lightdm/slick-greeter.conf \
         "/etc/lightdm/slick-greeter.conf.bak.$(date +%Y%m%d%H%M%S)"
 fi
+# Build an independent GTK theme from Kali-Dark; never modify the vendor theme.
+CUSTOM_GTK_THEME="/usr/share/themes/0x0PS-Greeter"
+install -d -m 0755 "$CUSTOM_GTK_THEME"
+cp -a /usr/share/themes/Kali-Dark/. "$CUSTOM_GTK_THEME/"
+sed -i \
+    -e 's/Name=Kali-Dark/Name=0x0PS-Greeter/' \
+    -e 's/GtkTheme=Kali-Dark/GtkTheme=0x0PS-Greeter/' \
+    "$CUSTOM_GTK_THEME/index.theme"
+
+# Install the repository's neon overrides and import them once in both GTK stylesheets.
+install -D -m 0644 "$SCRIPT_DIR/config/lightdm/0x0ps.css" \
+    "$CUSTOM_GTK_THEME/gtk-3.0/0x0ps.css"
+for gtk_css in "$CUSTOM_GTK_THEME/gtk-3.0/gtk.css" \
+               "$CUSTOM_GTK_THEME/gtk-3.0/gtk-dark.css"; do
+    if ! grep -Fq '@import url("0x0ps.css");' "$gtk_css"; then
+        printf '\\n@import url("0x0ps.css");\\n' >> "$gtk_css"
+    fi
+done
+
 cat > /etc/lightdm/slick-greeter.conf <<'GREETER'
 [Greeter]
+theme-name=0x0PS-Greeter
 background=/usr/share/backgrounds/0x0ps-login-wallpaper.jpg
 draw-user-background=false
 GREETER
