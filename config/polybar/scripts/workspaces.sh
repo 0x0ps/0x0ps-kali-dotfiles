@@ -10,7 +10,7 @@ for w in json.load(sys.stdin):
 
 for n in {1..10}; do
     if [[ "$n" == "$active" ]]; then
-        printf '%%{A1:i3-msg workspace number %s:}%%{T3}%%{F#A6FF00}☠%%{T-}%%{F-}%%{A}  ' "$n"
+        printf '%%{A1:i3-msg workspace number %s:}%%{T4}%%{F#FFFFFF}%%{u#FF3EA5}%%{+u}☠%%{-u}%%{T-}%%{F-}%%{A}  ' "$n"
     else
         printf '%%{A1:i3-msg workspace number %s:}%%{F#FFFFFF} %s %%{F-}%%{A}' "$n" "$n"
     fi
