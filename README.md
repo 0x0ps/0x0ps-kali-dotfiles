@@ -226,7 +226,7 @@ For this feature to work, check that:
 4. The session is X11 with i3, and `xrandr` lists a connected output such as `Virtual-1`.
 5. The i3 config contains the startup entry:
    ```i3
-   exec --no-startup-id ~/.config/i3/set-resolution.sh
+   exec --no-startup-id ~/.config/i3/set-resolution-vmware.sh
    ```
 
 Check the display and the script with:
@@ -428,7 +428,7 @@ Then review the changes before running the installer again. Re-running `sudo ./i
 
 If you only want to update the adaptive-resolution script, review the latest version at:
 
-[config/i3/set-resolution.sh](https://github.com/0x0ps/0x0ps-kali-dotfiles/blob/main/config/i3/set-resolution.sh)
+[config/i3/set-resolution.sh](https://github.com/0x0ps/0x0ps-kali-dotfiles/blob/main/config/i3/set-resolution-vmware.sh)
 
 Do not replace configuration files blindly if you have made local edits.
 
