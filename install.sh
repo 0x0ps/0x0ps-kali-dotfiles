@@ -370,6 +370,9 @@ run_as_user mkdir -p \
     "$USER_HOME/.config/fzf" \
     "$USER_HOME/.config/btop/themes"
 
+
+
+
 # ---------- uv + pywal ----------
 
 log "Installing/updating uv for $ACTUAL_USER"
@@ -794,6 +797,10 @@ fix_owner \
     "$USER_HOME/.zshrc.bak" \
     "$USER_HOME/.tmux.conf" \
     "$USER_HOME/.fehbg"
+
+
+
+
 
 # ---------- GNOME Terminal (dconf) ----------
 
