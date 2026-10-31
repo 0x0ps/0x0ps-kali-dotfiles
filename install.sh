@@ -452,12 +452,15 @@ run_as_user git clone --depth 1 "$VICTOR_REPO" "$VICTORCONKY_TMP"
 install -d -m 0755 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
     "$VICTORCONKY_DIR" "$VICTOR_FONT_DIR" "$CONKY_CONFIG_DIR"
 
-if [[ -f "$VICTORCONKY_TMP/victorConky/LinuxMedium.png" ]]; then
+# Install the version-controlled 0x0ps Neon Fuchsia artwork.
+CONKY_IMAGE_SOURCE="$SCRIPT_DIR/config/conky/assets/LinuxMedium-fuchsia-clean.png"
+CONKY_IMAGE_DEST="$VICTORCONKY_DIR/LinuxMedium-fuchsia-clean.png"
+
+if [[ -f "$CONKY_IMAGE_SOURCE" ]]; then
     install -m 0644 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
-        "$VICTORCONKY_TMP/victorConky/LinuxMedium.png" \
-        "$VICTORCONKY_DIR/LinuxMedium.png"
+        "$CONKY_IMAGE_SOURCE" "$CONKY_IMAGE_DEST"
 else
-    die "VictorConky LinuxMedium.png was not found in the upstream repository."
+    die "Missing 0x0ps Conky artwork: $CONKY_IMAGE_SOURCE"
 fi
 
 if compgen -G "$VICTORCONKY_TMP/fonts/*.ttf" > /dev/null; then
@@ -467,6 +470,13 @@ else
     die "VictorConky font files were not found in the upstream repository."
 fi
 
+# Back up the existing Conky configuration before replacing it.
+if [[ -f "$CONKY_CONFIG_DEST" ]]; then
+    cp -a "$CONKY_CONFIG_DEST" \
+        "$CONKY_CONFIG_DEST.bak.$(date +%Y%m%d%H%M%S)"
+fi
+
+# Install the version-controlled 0x0ps Conky configuration.
 if [[ -f "$CONKY_CONFIG_SOURCE" ]]; then
     install -m 0644 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
         "$CONKY_CONFIG_SOURCE" "$CONKY_CONFIG_DEST"

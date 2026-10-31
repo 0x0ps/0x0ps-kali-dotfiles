@@ -150,7 +150,7 @@ client.urgent           #FF5C5C   #FF5C5C    #000000    #FF00AF   #FF5C5C
 
 # Startup Applications
 # 0x0ps VictorConky desktop HUD
-exec --no-startup-id conky -c ~/.config/conky/victorconky-medium.conf
+exec_always --no-startup-id sh -c 'pgrep -x conky >/dev/null || conky -c ~/.config/conky/victorconky-medium.conf -d'
 exec --no-startup-id spice-vdagent
 exec --no-startup-id ~/.config/i3/set-resolution-vmware.sh
 exec_always --no-startup-id sh ~/.fehbg
