@@ -208,10 +208,10 @@ While in resize mode:
 
 ## Adaptive SPICE resolution
 
-The repository includes `config/i3/set-resolution.sh`. During installation it is copied to:
+The repository includes `config/i3/set-resolution-vmware.sh`. During installation it is copied to:
 
 ```text
-~/.config/i3/set-resolution.sh
+~/.config/i3/set-resolution-vmware.sh
 ```
 
 The i3 configuration starts it automatically. The script periodically checks the connected virtual display and its preferred `xrandr` mode. When SPICE advertises a stable new preferred mode, the script applies it and restores the wallpaper. This helps the Kali desktop follow Remote Viewer window resizing and maximization without hard-coding a resolution such as `3840x985`.
@@ -295,17 +295,89 @@ dpkg -l | grep spice-vdagent
 pgrep -af spice-vdagent
 ```
 
-## Custom scripts
+## Custom scripts and automation
 
-Installed helper scripts are placed in `~/.config/bin/` when provided by the repository. Examples include:
+The shell scripts below are version-controlled in this repository. **They are not separate mystery downloads**: clone or pull this repository, then the main installer copies the supported scripts into your home directory and sets executable permissions. Most scripts are started by i3 or Polybar automatically; a few are optional utilities.
 
-- `htb.sh` — HTB VPN status.
-- `eth.sh` — Ethernet status.
-- `usb.sh` — USB network status.
-- `htb_target.sh` — current target display.
-- `target` — text file used to store the current target.
+### Scripts installed automatically
 
-The exact modules available depend on the files in the repository version you install.
+| Repository path | Installed path / trigger | What it does |
+|---|---|---|
+| `config/i3/scripts/power-performance.sh` | `~/.config/i3/scripts/power-performance.sh`; started at i3 login | Disables X11 screen blanking and DPMS, then requests the **Performance** power profile through `powerprofilesctl`. |
+| `config/i3/set-resolution-vmware.sh` | `~/.config/i3/set-resolution-vmware.sh`; started at i3 login | Watches VMware `Virtual-*` display modes; applies a newly advertised preferred resolution, reapplies the wallpaper, and restarts Polybar. Log: `/tmp/0x0ps-vmware-resize.log`. |
+| `config/i3/clipboard_fix.sh` | `~/.config/i3/clipboard_fix.sh`; started by i3 | Restarts the VMware user agent process (`vmtoolsd -n vmusr`) to support clipboard integration. |
+| `config/polybar/launch.sh` | `~/.config/polybar/launch.sh`; started by i3 | Quits existing Polybar instances and launches the configured bar. Logs: `/tmp/polybar1.log` and `/tmp/polybar2.log`. |
+| `config/polybar/scripts/workspaces.sh` | Used by the Polybar workspace module | Displays i3 workspaces 1–10 and highlights the active workspace. |
+| `config/bin/htb.sh` | `~/.config/bin/htb.sh`; called by Polybar | Shows the `tun0` address when the HTB VPN is connected, otherwise “Disconnected”. |
+| `config/bin/eth.sh` | `~/.config/bin/eth.sh`; called by Polybar | Shows the `eth0` address or disconnected status. |
+| `config/bin/usb.sh` | `~/.config/bin/usb.sh`; called by Polybar | Shows the `usb0` address or disconnected status. |
+| `config/bin/htb_target.sh` | `~/.config/bin/htb_target.sh`; called by Polybar | Reads the current target from `~/.config/bin/target` and displays its IP/name. |
+| `config/i3/scripts/kitty-3pane.sh` | `~/.config/i3/scripts/kitty-3pane.sh`; `Mod + Shift + Enter` | Opens three Kitty terminals in the predefined i3 layout on workspace 9. It does nothing if workspace 9 is already focused. |
+| `config/i3/scripts/kitty-resize-mode.sh` | `~/.config/i3/scripts/kitty-resize-mode.sh`; `Mod + Ctrl + r` | Floats the focused Kitty window and enters the dedicated Kitty resize mode. Focus Kitty first; use the resize-mode keys configured in i3, then press Enter or Esc to leave the mode. |
+| `config/rofi/powermenu/type-5/powermenu.sh` | `~/.config/rofi/powermenu/type-5/powermenu.sh`; `Mod + Esc` | Opens the themed power menu for lock, suspend, logout, hibernate, reboot, and shutdown. Power actions require confirmation. System sleep targets are masked by the main installer, so suspend/hibernate are intentionally unavailable unless you later unmask them. |
+
+The main installer also creates the target file at `~/.config/bin/target`. In a new Zsh shell, set or clear the target with:
+
+```bash
+target 10.10.11.42
+cleartarget
+```
+
+The `target` helper currently stores the IP supplied as its first argument. The Polybar target module reads that file.
+
+### Optional scripts in the repository
+
+These are not run by the main desktop installer:
+
+| Script | Purpose | How to run |
+|---|---|---|
+| `install-bloodhound.sh` | Installs Docker, the official BloodHound CLI, and BloodHound Community Edition; updates an existing installation when its config is present. Supports amd64 and arm64. | From the cloned repository: `sudo ./install-bloodhound.sh`. Save the generated admin password. A new login may be needed after Docker group membership is added. |
+| `fix-terminal.sh` | Restores the GNOME Terminal dconf settings from `config/gnome_terminal_settings_backup.txt`. | From the repository root, run `dconf load /org/gnome/terminal/ < ./config/gnome_terminal_settings_backup.txt`. The helper itself is simply a wrapper for that command. |
+
+### Install or refresh the scripts manually
+
+Normally, use the main installer described above. If you only want to copy/update the helper scripts without rerunning the full installer, run these commands from the repository root:
+
+```bash
+mkdir -p ~/.config/i3/scripts ~/.config/i3 ~/.config/bin ~/.config/polybar/scripts ~/.config/rofi/powermenu/type-5
+install -Dm755 config/i3/scripts/power-performance.sh ~/.config/i3/scripts/power-performance.sh
+install -Dm755 config/i3/scripts/kitty-3pane.sh ~/.config/i3/scripts/kitty-3pane.sh
+install -Dm755 config/i3/scripts/kitty-resize-mode.sh ~/.config/i3/scripts/kitty-resize-mode.sh
+install -Dm755 config/i3/set-resolution-vmware.sh ~/.config/i3/set-resolution-vmware.sh
+install -Dm755 config/i3/clipboard_fix.sh ~/.config/i3/clipboard_fix.sh
+install -Dm755 config/polybar/launch.sh ~/.config/polybar/launch.sh
+install -Dm755 config/polybar/scripts/workspaces.sh ~/.config/polybar/scripts/workspaces.sh
+install -Dm755 config/bin/htb.sh ~/.config/bin/htb.sh
+install -Dm755 config/bin/eth.sh ~/.config/bin/eth.sh
+install -Dm755 config/bin/usb.sh ~/.config/bin/usb.sh
+install -Dm755 config/bin/htb_target.sh ~/.config/bin/htb_target.sh
+install -Dm755 config/rofi/powermenu/type-5/powermenu.sh ~/.config/rofi/powermenu/type-5/powermenu.sh
+touch ~/.config/bin/target
+```
+
+Then validate and reload i3:
+
+```bash
+i3 -C -c ~/.config/i3/config
+i3-msg reload
+```
+
+The manual copy command does not install dependencies or apply system-wide sleep settings. For the complete setup, run `sudo ./install.sh` after reviewing it.
+
+## Externally downloaded components
+
+The main installer downloads or installs these components in addition to files stored in this repository:
+
+- **APT packages:** i3, Polybar, Kitty, Conky, Rofi, Picom, SPICE agent, `power-profiles-daemon`, and the other dependencies listed in `install.sh`.
+- **uv:** bootstrapped using Astral's official install script; then used to install `pywal`.
+- **Nerd Fonts:** Iosevka, RobotoMono, and Hack ZIP archives from the Nerd Fonts GitHub releases.
+- **VictorConky upstream assets:** the installer clones `Gictorbit/victorconky` to obtain its font files. The 0x0ps Conky artwork and Conky configuration are taken from this repository.
+- **TPM:** cloned from `tmux-plugins/tpm` into `~/.tmux/plugins/tpm`.
+- **Firefox theme:** the installer queries Mozilla Add-ons for the Cyberpunk Neon Rain theme ID and configures Firefox enterprise policy to install it on Firefox startup.
+
+The installer also applies system-level power settings: it masks `sleep.target`, `suspend.target`, `hibernate.target`, and `hybrid-sleep.target`; disables optional screen-locker / desktop power-manager services when present; and enables `power-profiles-daemon`. At i3 login, `power-performance.sh` disables X11 screensaver/DPMS and requests the Performance profile. A VM or host may not expose a Performance profile; in that case, the helper reports that it is unavailable while the no-blanking settings still apply.
+
+**Security note:** review the installer and downloaded upstream code before execution. The uv bootstrap is piped directly to a shell by the installer, and upstream repositories/releases may change over time.
 
 ## Troubleshooting
 
