@@ -129,7 +129,25 @@ apt-get install -y \
     xterm \
     spice-vdagent \
     conky-all \
+    power-profiles-daemon \
     jq \
+
+# ---------- 0x0ps performance / no-standby policy ----------
+
+log "Disabling standby, screen lockers and energy-saving services"
+
+# Prevent system-wide suspend/hibernate, including idle and lid-triggered requests.
+systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+
+# Stop optional desktop power managers/lockers if present; i3 uses the settings below.
+for unit in light-locker.service xscreensaver.service xfce4-power-manager.service; do
+    systemctl disable --now "$unit" >/dev/null 2>&1 || true
+done
+
+# Enable the standard Linux power-profile service. The i3 session helper selects
+# Performance when the hardware/VM exposes that profile.
+systemctl enable --now power-profiles-daemon.service >/dev/null 2>&1 || \
+    warn "Power Profiles Daemon could not start; Performance profile may be unavailable."
 
 # Fastfetch is required by the custom configuration and the Zsh startup hook.
 command -v fastfetch >/dev/null 2>&1 || die "Fastfetch installation failed."
@@ -770,6 +788,7 @@ for f in \
     "$USER_HOME/.config/i3/set-resolution-vmware.sh" \
     "$USER_HOME/.config/i3/clipboard_fix.sh" \
     "$USER_HOME/.config/i3/scripts/kitty-3pane.sh" \
+    "$USER_HOME/.config/i3/scripts/power-performance.sh" \
     "$USER_HOME/.config/rofi/powermenu/type-5/powermenu.sh" \
     "$USER_HOME/.fehbg"
 do
