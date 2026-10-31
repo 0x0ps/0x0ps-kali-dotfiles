@@ -149,6 +149,8 @@ client.unfocused        #FF00AF   #101010    #D7F7D7    #FF00AF   #FF00AF
 client.urgent           #FF5C5C   #FF5C5C    #000000    #FF00AF   #FF5C5C
 
 # Startup Applications
+# Disable X11 screen blanking/DPMS and request Performance mode.
+exec --no-startup-id ~/.config/i3/scripts/power-performance.sh
 # 0x0ps VictorConky desktop HUD
 exec --no-startup-id sh -c 'pgrep -x conky >/dev/null || conky -c ~/.config/conky/victorconky-medium.conf -d'
 exec --no-startup-id spice-vdagent
