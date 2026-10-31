@@ -129,7 +129,8 @@ apt-get install -y \
     xterm \
     spice-vdagent \
     conky-all \
-    jq
+    jq \
+    xdotool
 
 # Fastfetch is required by the custom configuration and the Zsh startup hook.
 command -v fastfetch >/dev/null 2>&1 || die "Fastfetch installation failed."
@@ -770,6 +771,7 @@ for f in \
     "$USER_HOME/.config/i3/set-resolution-vmware.sh" \
     "$USER_HOME/.config/i3/clipboard_fix.sh" \
     "$USER_HOME/.config/i3/scripts/kitty-3pane.sh" \
+    "$USER_HOME/.config/i3/scripts/conky-autohide.sh" \
     "$USER_HOME/.config/rofi/powermenu/type-5/powermenu.sh" \
     "$USER_HOME/.fehbg"
 do
