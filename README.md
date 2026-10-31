@@ -249,7 +249,7 @@ pkill -f '[s]et-resolution.sh'
 To prevent it from starting again, edit `~/.config/i3/config` and comment out or remove this line:
 
 ```i3
-exec --no-startup-id ~/.config/i3/set-resolution.sh
+exec --no-startup-id ~/.config/i3/set-resolution-vmware.sh
 ```
 
 Then reload i3 with `Mod+Shift+c`, or log out and back in.
@@ -428,7 +428,7 @@ Then review the changes before running the installer again. Re-running `sudo ./i
 
 If you only want to update the adaptive-resolution script, review the latest version at:
 
-[config/i3/set-resolution.sh](https://github.com/0x0ps/0x0ps-kali-dotfiles/blob/main/config/i3/set-resolution-vmware.sh)
+[config/i3/set-resolution-vmware.sh](https://github.com/0x0ps/0x0ps-kali-dotfiles/blob/main/config/i3/set-resolution-vmware.sh)
 
 Do not replace configuration files blindly if you have made local edits.
 
