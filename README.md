@@ -342,7 +342,7 @@ The main installer can optionally install **SysReptor**, a self-hosted penetrati
 Do you want to install SysReptor? [y/N]:
 ```
 
-The default is **No**. If you choose **Yes**, the installer installs Docker Engine and Compose, downloads the official SysReptor installer, and prepares the deployment under:
+The default is **No**. If you choose **Yes**, the installer configures Docker's official APT repository (mapping Kali to Debian Trixie, as documented by Kali), installs Docker Engine and Compose v2, downloads the official SysReptor installer, and prepares the deployment under:
 
 ```text
 ~/sysreptor/deploy
