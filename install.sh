@@ -845,7 +845,7 @@ fi
 # ---------- Optional SysReptor ----------
 
 install_sysreptor_optional() {
-    local docker_installer sysreptor_installer
+    local sysreptor_installer docker_debian_codename docker_architecture
 
     cat <<'NOTICE'
 
@@ -881,15 +881,68 @@ NOTICE
     log "Installing Docker prerequisites"
     apt-get install -y ca-certificates curl sed openssl uuid-runtime coreutils || return 1
 
-    docker_installer="$CACHE_DIR/get-docker.sh"
-    sysreptor_installer="$CACHE_DIR/sysreptor-install.sh"
+    # Do not use get.docker.com here: its convenience script does not
+    # recognize Kali's "kali" distribution ID and can create an invalid
+    # kali-rolling Docker repository (HTTP 404).
+    #
+    # Kali's Docker installation guide currently maps Kali to Debian Trixie.
+    # Keep this explicit and overridable so the mapping can be updated when
+    # Kali moves to a newer Debian stable release.
+    if [[ "${ID:-}" == "kali" ]]; then
+        docker_debian_codename="${DOCKER_DEBIAN_CODENAME:-trixie}"
+    elif [[ "${ID:-}" == "debian" ]]; then
+        docker_debian_codename="${VERSION_CODENAME:-}"
+        case "$docker_debian_codename" in
+            trixie|bookworm) ;;
+            *)
+                warn "Unsupported Debian codename for Docker repository: $docker_debian_codename"
+                return 1
+                ;;
+        esac
+    else
+        warn "Docker CE repository setup is supported here only for Kali or Debian."
+        return 1
+    fi
 
-    log "Downloading the official Docker installation script"
-    curl -fsSL https://get.docker.com -o "$docker_installer" || return 1
-    bash "$docker_installer" || return 1
+    docker_architecture="$(dpkg --print-architecture)"
+    case "$docker_architecture" in
+        amd64|arm64|armhf|ppc64el) ;;
+        *)
+            warn "Docker CE repository does not support architecture: $docker_architecture"
+            return 1
+            ;;
+    esac
+
+    # Remove the invalid source left by the previous get.docker.com attempt.
+    rm -f /etc/apt/sources.list.d/docker.list /etc/apt/sources.list.d/docker.sources
+
+    log "Configuring the official Docker APT repository for Debian $docker_debian_codename"
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/debian/gpg \
+        -o /etc/apt/keyrings/docker.asc || return 1
+    chmod a+r /etc/apt/keyrings/docker.asc
+
+    cat > /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/debian
+Suites: $docker_debian_codename
+Components: stable
+Architectures: $docker_architecture
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+    apt-get update || return 1
+
+    log "Installing Docker Engine and Docker Compose v2"
+    apt-get install -y docker-ce docker-ce-cli containerd.io \
+        docker-buildx-plugin docker-compose-plugin || return 1
 
     log "Enabling Docker Engine"
     systemctl enable --now docker || return 1
+    docker info >/dev/null 2>&1 || {
+        warn "Docker Engine was installed but the daemon is not responding."
+        return 1
+    }
     docker compose version >/dev/null 2>&1 || {
         warn "Docker Compose v2 is not available."
         return 1
