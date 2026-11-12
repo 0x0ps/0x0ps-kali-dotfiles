@@ -30,17 +30,17 @@ log "Checking Docker and Git dependencies"
 
 if ! command -v git >/dev/null 2>&1 || ! command -v curl >/dev/null 2>&1; then
     apt-get update
-    apt-get install -y git curl ca-certificates
+    apt-get install -y git curl ca-certificates openssl python3
 fi
 
 if ! command -v docker >/dev/null 2>&1; then
     apt-get update
-    apt-get install -y docker.io docker-compose-v2
+    apt-get install -y docker.io docker-compose-v2 openssl python3
 fi
 
 if ! docker compose version >/dev/null 2>&1; then
     apt-get update
-    apt-get install -y docker-compose-v2
+    apt-get install -y docker-compose-v2 openssl python3
 fi
 
 command -v docker >/dev/null 2>&1 || die "Docker is not installed."
