@@ -332,6 +332,7 @@ These are not run by the main desktop installer:
 | Script | Purpose | How to run |
 |---|---|---|
 | `install-bloodhound.sh` | Installs Docker, the official BloodHound CLI, and BloodHound Community Edition; updates an existing installation when its config is present. Supports amd64 and arm64. | From the cloned repository: `sudo ./install-bloodhound.sh`. Save the generated admin password. A new login may be needed after Docker group membership is added. |
+| `install-artex.sh` | Installs the official ARTEX AI Docker deployment under `~/Opt/AI/ARTEX`, creates a private `.env` with a random PostgreSQL password, and binds the web UI to localhost. | From the cloned repository: `sudo ./install-artex.sh`. Open `http://127.0.0.1:8787` inside Kali. |
 | `fix-terminal.sh` | Restores the GNOME Terminal dconf settings from `config/gnome_terminal_settings_backup.txt`. | From the repository root, run `dconf load /org/gnome/terminal/ < ./config/gnome_terminal_settings_backup.txt`. The helper itself is simply a wrapper for that command. |
 
 ### Optional: SysReptor
@@ -428,6 +429,51 @@ If `docker` appears in the output of `groups`, Docker commands can normally be r
 Always run `docker compose` from `~/sysreptor/deploy`. Running it from `~` or `~/sysreptor` produces `no configuration file provided: not found` because Compose cannot find the deployment file. If Docker reports permission denied for `/var/run/docker.sock`, use `sudo` or log out and back in after the Docker group was added.
 
 SysReptor's self-hosted documentation lists Ubuntu as its officially supported operating system. Kali is technically possible, but is not officially supported by Syslifters. The documented self-hosted baseline is 8 GB RAM; allow additional disk space for Docker images and persistent application data.
+
+
+### Optional: ARTEX AI
+
+The standalone `install-artex.sh` installs the official [AA8Corp/ARTEX](https://github.com/AA8Corp/artex) Docker deployment. It is intentionally separate from the main Kali desktop installer and from BloodHound.
+
+Run it from the root of the cloned 0x0ps repository:
+
+```bash
+sudo ./install-artex.sh
+```
+
+The installer creates the following layout in the normal desktop user's home directory:
+
+```text
+~/Opt/
+└── AI/
+    └── ARTEX/
+        ├── docker-compose.yml
+        ├── .env
+        ├── data/
+        └── skills/
+```
+
+It reuses an existing ARTEX checkout and preserves an existing `.env`. On a first install, it generates a strong random PostgreSQL password and stores it in `.env` with owner-only permissions. No API key is required during installation; configure a supported LLM provider in ARTEX after opening the dashboard.
+
+The installer changes the upstream Compose port mapping for the main dashboard to `127.0.0.1:8787`. The dashboard is therefore available only from the Kali machine at:
+
+```text
+http://127.0.0.1:8787
+```
+
+This is deliberate: ARTEX is an autonomous penetration-testing system and its web interface should not be exposed to the LAN or Internet by default. Use it only in your own lab or against systems for which you have explicit authorization.
+
+Useful commands:
+
+```bash
+cd ~/Opt/AI/ARTEX
+sudo docker compose ps
+sudo docker compose logs -f artex
+sudo docker compose stop
+sudo docker compose up -d
+```
+
+Do not use `docker compose down -v` as a routine stop command: it can delete the PostgreSQL volume and persistent application data. Docker group membership grants effectively root-level control over Kali; log out and back in after installation before using Docker without `sudo`.
 
 ### Install or refresh the scripts manually
 
