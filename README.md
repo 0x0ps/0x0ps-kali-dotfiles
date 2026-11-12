@@ -336,37 +336,96 @@ These are not run by the main desktop installer:
 
 ### Optional: SysReptor
 
-The main installer can optionally install **SysReptor**, a self-hosted penetration-testing report platform. At the end of the desktop setup, it displays an English warning and asks:
+The main installer can optionally install **SysReptor**, a self-hosted penetration-testing report platform. At the end of the desktop setup, it asks:
 
 ```text
 Do you want to install SysReptor? [y/N]:
 ```
 
-The default is **No**. If you choose **Yes**, the installer configures Docker's official APT repository (mapping Kali to Debian Trixie, as documented by Kali), installs Docker Engine and Compose v2, downloads the official SysReptor installer, and prepares the deployment under:
+Choose **Yes** to install it. If prompted for a license key, leave it blank to use the Community Edition (you can upgrade later). During the official setup, the file/database encryption prompt is a deployment choice; make your choice deliberately because it affects how stored data is protected.
 
-```text
-~/sysreptor/deploy
-```
+#### What the 0x0ps installer configures
 
-During the official SysReptor setup, when asked whether to configure Caddy to expose the application to your LAN or the Internet, choose **No**. Keep the default localhost-only access at:
+When SysReptor is selected, the 0x0ps installer:
+
+1. Configures Docker's official APT repository (Kali is mapped to Debian Trixie).
+2. Installs Docker Engine and the Docker Compose v2 plugin.
+3. Enables and starts the Docker service.
+4. Downloads and runs the official SysReptor installer.
+5. Prepares the deployment under `~/sysreptor/deploy`.
+
+When the official installer asks whether to configure Caddy to expose SysReptor to your LAN or the Internet, choose **No** to keep the default localhost-only configuration. The application is then available inside the Kali VM at:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-The SysReptor installer starts the stack as part of its setup; the 0x0ps installer then **stops the containers before finishing**. They are not intentionally left running in the background. The upstream Compose services use Docker's `unless-stopped` restart policy, so a manually stopped stack remains stopped after a Docker daemon restart or system reboot. Start and stop SysReptor yourself whenever you need it:
+This address is local to the Kali VM; it is not directly reachable from another computer. Do not expose the service publicly without first planning authentication, TLS, firewall rules, backups, and secure remote access.
 
+#### Start SysReptor
+
+After installation, open a terminal and move into the deployment directory. Docker Compose must be run from this directory because it contains the Compose configuration:
 
 ```bash
-# Start SysReptor
 cd ~/sysreptor/deploy
-docker compose up -d
-
-# Stop SysReptor without deleting data
-docker compose stop
+sudo docker compose up -d
 ```
 
-The first installation adds your account to the `docker` group. **Log out and back in** before using Docker without `sudo`. Membership in the Docker group grants effectively root-level control over the Kali host; only enable this option if you understand and accept that privilege.
+The first start may take a little time while the application initializes. Check the containers:
+
+```bash
+sudo docker compose ps
+```
+
+The expected services include the SysReptor application, PostgreSQL database, and Redis. PostgreSQL should become **healthy**; the application may initially show **health: starting** while it initializes.
+
+Check the local HTTP endpoint:
+
+```bash
+curl -I http://127.0.0.1:8000
+```
+
+Then open `http://127.0.0.1:8000` in Firefox inside Kali and complete the initial account setup. You can change your account password from within the SysReptor interface.
+
+#### Stop and restart SysReptor
+
+To stop the containers without deleting reports or persistent data:
+
+```bash
+cd ~/sysreptor/deploy
+sudo docker compose stop
+```
+
+To start them again later:
+
+```bash
+cd ~/sysreptor/deploy
+sudo docker compose up -d
+```
+
+To inspect application logs when troubleshooting:
+
+```bash
+cd ~/sysreptor/deploy
+sudo docker compose logs --tail=100
+```
+
+Do not use `docker compose down -v` as a routine stop command: the `-v` option removes Compose-managed volumes and can delete persistent application/database data.
+
+#### Docker permissions (sudo vs. no sudo)
+
+The installer adds the desktop user to the `docker` group. Group membership does not take effect in terminals that were already open when the change was made. **Log out of the Kali desktop session completely and log back in** (or reboot), then verify:
+
+```bash
+groups
+docker ps
+```
+
+If `docker` appears in the output of `groups`, Docker commands can normally be run without `sudo`. Until you start a fresh login session, use `sudo docker ...`.
+
+> **Security note:** membership in the `docker` group grants effectively root-level control over the Kali host. Only enable/use it if you understand and accept that privilege.
+
+Always run `docker compose` from `~/sysreptor/deploy`. Running it from `~` or `~/sysreptor` produces `no configuration file provided: not found` because Compose cannot find the deployment file. If Docker reports permission denied for `/var/run/docker.sock`, use `sudo` or log out and back in after the Docker group was added.
 
 SysReptor's self-hosted documentation lists Ubuntu as its officially supported operating system. Kali is technically possible, but is not officially supported by Syslifters. The documented self-hosted baseline is 8 GB RAM; allow additional disk space for Docker images and persistent application data.
 
