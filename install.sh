@@ -842,6 +842,98 @@ if [[ -f "$GNOME_BACKUP" ]]; then
 else
     warn "GNOME Terminal backup not found; skipping settings restore."
 fi
+# ---------- Optional SysReptor ----------
+
+install_sysreptor_optional() {
+    local docker_installer sysreptor_installer
+
+    cat <<'NOTICE'
+
+============================================================
+ OPTIONAL COMPONENT: SYSREPTOR
+============================================================
+SysReptor is a self-hosted penetration-testing report platform.
+It requires Docker and additional disk space and memory.
+
+If selected:
+  - Docker and SysReptor will be installed.
+  - SysReptor will NOT be left running after installation.
+  - Its web interface will be available only on this Kali machine:
+      http://127.0.0.1:8000
+  - You must start and stop its containers manually when needed.
+  - Docker access is effectively equivalent to root access.
+
+The official SysReptor installer may ask whether to configure
+Caddy for LAN/Internet access. Choose NO to keep this local-only.
+
+NOTICE
+
+    local answer
+    read -r -p "Do you want to install SysReptor? [y/N]: " answer
+    case "$answer" in
+        [yY]|[yY][eE][sS]) ;;
+        *)
+            log "Skipping optional SysReptor installation."
+            return 0
+            ;;
+    esac
+
+    log "Installing Docker prerequisites"
+    apt-get install -y ca-certificates curl sed openssl uuid-runtime coreutils
+
+    docker_installer="$CACHE_DIR/get-docker.sh"
+    sysreptor_installer="$CACHE_DIR/sysreptor-install.sh"
+
+    log "Downloading the official Docker installation script"
+    curl -fsSL https://get.docker.com -o "$docker_installer" || return 1
+    bash "$docker_installer" || return 1
+
+    log "Enabling Docker Engine"
+    systemctl enable --now docker || return 1
+    docker compose version >/dev/null 2>&1 || {
+        warn "Docker Compose v2 is not available."
+        return 1
+    }
+
+    # Docker group membership grants root-equivalent control of the host.
+    getent group docker >/dev/null 2>&1 || groupadd docker || return 1
+    usermod -aG docker "$ACTUAL_USER" || return 1
+
+    log "Downloading the official SysReptor installer"
+    curl -fsSL https://docs.sysreptor.com/install.sh -o "$sysreptor_installer" || return 1
+    chown "$ACTUAL_USER:$(id -gn "$ACTUAL_USER")" "$sysreptor_installer"
+    chmod 0644 "$sysreptor_installer"
+
+    log "Running the official SysReptor installer as $ACTUAL_USER"
+    warn "When asked about setting up Caddy for LAN/Internet access, answer: n"
+    run_as_user bash -c 'cd "$HOME" && bash "$1"' _ "$sysreptor_installer" || return 1
+
+    if [[ ! -f "$USER_HOME/sysreptor/deploy/docker-compose.yml" ]]; then
+        warn "SysReptor deployment files were not found at $USER_HOME/sysreptor/deploy."
+        return 1
+    fi
+
+    log "Stopping SysReptor after installation"
+    run_as_user bash -c 'cd "$HOME/sysreptor/deploy" && docker compose stop' || return 1
+
+    cat <<EOF
+
+SysReptor has been installed and its containers are STOPPED.
+
+After logging out and back in (to apply Docker group membership), use:
+  Start:  cd ~/sysreptor/deploy && docker compose up -d
+  Stop:   cd ~/sysreptor/deploy && docker compose stop
+
+Open: http://127.0.0.1:8000
+EOF
+    return 0
+}
+
+if ! install_sysreptor_optional; then
+    warn "SysReptor setup did not complete successfully. Review the messages above."
+    warn "The rest of the 0x0ps Kali installation will continue."
+fi
+
 # ---------- Summary ----------
 
 log "Installation completed"
