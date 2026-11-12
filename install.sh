@@ -952,6 +952,8 @@ EOF
     getent group docker >/dev/null 2>&1 || groupadd docker || return 1
     usermod -aG docker "$ACTUAL_USER" || return 1
 
+    sysreptor_installer="$CACHE_DIR/sysreptor-install.sh"
+
     log "Downloading the official SysReptor installer"
     curl -fsSL https://docs.sysreptor.com/install.sh -o "$sysreptor_installer" || return 1
     chown "$ACTUAL_USER:$(id -gn "$ACTUAL_USER")" "$sysreptor_installer" || return 1
