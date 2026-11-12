@@ -354,7 +354,8 @@ During the official SysReptor setup, when asked whether to configure Caddy to ex
 http://127.0.0.1:8000
 ```
 
-The SysReptor installer starts the stack as part of its setup; the 0x0ps installer then **stops the containers before finishing**. They are not intentionally left running in the background. Start and stop SysReptor yourself whenever you need it:
+The SysReptor installer starts the stack as part of its setup; the 0x0ps installer then **stops the containers before finishing**. They are not intentionally left running in the background. The upstream Compose services use Docker's `unless-stopped` restart policy, so a manually stopped stack remains stopped after a Docker daemon restart or system reboot. Start and stop SysReptor yourself whenever you need it:
+
 
 ```bash
 # Start SysReptor
