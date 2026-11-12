@@ -14,7 +14,8 @@ window {
     padding: 18px;
     border: 2px;
     border-color: #FF00AF;
-    background-color: transparent;
+    /* Near-opaque black keeps terminal content from showing through. */
+    background-color: rgba ( 0, 0, 0, 96 % );
 }
 
 mainbox {
