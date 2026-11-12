@@ -334,6 +334,41 @@ These are not run by the main desktop installer:
 | `install-bloodhound.sh` | Installs Docker, the official BloodHound CLI, and BloodHound Community Edition; updates an existing installation when its config is present. Supports amd64 and arm64. | From the cloned repository: `sudo ./install-bloodhound.sh`. Save the generated admin password. A new login may be needed after Docker group membership is added. |
 | `fix-terminal.sh` | Restores the GNOME Terminal dconf settings from `config/gnome_terminal_settings_backup.txt`. | From the repository root, run `dconf load /org/gnome/terminal/ < ./config/gnome_terminal_settings_backup.txt`. The helper itself is simply a wrapper for that command. |
 
+### Optional: SysReptor
+
+The main installer can optionally install **SysReptor**, a self-hosted penetration-testing report platform. At the end of the desktop setup, it displays an English warning and asks:
+
+```text
+Do you want to install SysReptor? [y/N]:
+```
+
+The default is **No**. If you choose **Yes**, the installer installs Docker Engine and Compose, downloads the official SysReptor installer, and prepares the deployment under:
+
+```text
+~/sysreptor/deploy
+```
+
+During the official SysReptor setup, when asked whether to configure Caddy to expose the application to your LAN or the Internet, choose **No**. Keep the default localhost-only access at:
+
+```text
+http://127.0.0.1:8000
+```
+
+The SysReptor installer starts the stack as part of its setup; the 0x0ps installer then **stops the containers before finishing**. They are not intentionally left running in the background. Start and stop SysReptor yourself whenever you need it:
+
+```bash
+# Start SysReptor
+cd ~/sysreptor/deploy
+docker compose up -d
+
+# Stop SysReptor without deleting data
+docker compose stop
+```
+
+The first installation adds your account to the `docker` group. **Log out and back in** before using Docker without `sudo`. Membership in the Docker group grants effectively root-level control over the Kali host; only enable this option if you understand and accept that privilege.
+
+SysReptor's self-hosted documentation lists Ubuntu as its officially supported operating system. Kali is technically possible, but is not officially supported by Syslifters. The documented self-hosted baseline is 8 GB RAM; allow additional disk space for Docker images and persistent application data.
+
 ### Install or refresh the scripts manually
 
 Normally, use the main installer described above. If you only want to copy/update the helper scripts without rerunning the full installer, run these commands from the repository root:
