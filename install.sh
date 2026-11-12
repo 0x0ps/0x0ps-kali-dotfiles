@@ -879,7 +879,7 @@ NOTICE
     esac
 
     log "Installing Docker prerequisites"
-    apt-get install -y ca-certificates curl sed openssl uuid-runtime coreutils
+    apt-get install -y ca-certificates curl sed openssl uuid-runtime coreutils || return 1
 
     docker_installer="$CACHE_DIR/get-docker.sh"
     sysreptor_installer="$CACHE_DIR/sysreptor-install.sh"
@@ -901,12 +901,17 @@ NOTICE
 
     log "Downloading the official SysReptor installer"
     curl -fsSL https://docs.sysreptor.com/install.sh -o "$sysreptor_installer" || return 1
-    chown "$ACTUAL_USER:$(id -gn "$ACTUAL_USER")" "$sysreptor_installer"
-    chmod 0644 "$sysreptor_installer"
+    chown "$ACTUAL_USER:$(id -gn "$ACTUAL_USER")" "$sysreptor_installer" || return 1
+    chmod 0644 "$sysreptor_installer" || return 1
 
     log "Running the official SysReptor installer as $ACTUAL_USER"
     warn "When asked about setting up Caddy for LAN/Internet access, answer: n"
-    run_as_user bash -c 'cd "$HOME" && bash "$1"' _ "$sysreptor_installer" || return 1
+    if ! run_as_user bash -c 'cd "$HOME" && bash "$1"' _ "$sysreptor_installer"; then
+        if [[ -f "$USER_HOME/sysreptor/deploy/docker-compose.yml" ]]; then
+            run_as_user bash -c 'cd "$HOME/sysreptor/deploy" && docker compose stop' || true
+        fi
+        return 1
+    fi
 
     if [[ ! -f "$USER_HOME/sysreptor/deploy/docker-compose.yml" ]]; then
         warn "SysReptor deployment files were not found at $USER_HOME/sysreptor/deploy."
