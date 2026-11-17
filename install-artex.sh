@@ -97,7 +97,7 @@ docker compose up -d --build
 log "Checking running services"
 docker compose ps
 
-cat <<'INFO'
+cat <<INFO
 
 ============================================================
  ARTEX installation prepared
