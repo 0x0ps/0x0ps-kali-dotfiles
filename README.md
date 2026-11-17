@@ -40,9 +40,10 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 - A graphical desktop session using **X11 and i3**. This setup is not intended for Wayland sessions.
 - An internet connection to download packages, fonts, themes, and tools.
 - A normal user account with `sudo` access.
-- For adaptive display resizing: a Proxmox (or compatible) VM using **SPICE**, a supported virtual graphics adapter such as **QXL**, and the SPICE guest agent installed and working.
+- An internet connection for APT and optional upstream components. The installer uses the system's configured network and DNS settings; it does not require a particular router, resolver, IP range, hostname, or home-lab service.
+- Optional SPICE/VMware integrations are not enabled by default and are only relevant inside compatible virtual machines.
 
-The adaptive-resolution script is optional outside SPICE/QXL environments. It looks for a connected output named `Virtual-*`, which is typical for QXL/SPICE but may not match every virtual or physical display setup.
+The adaptive-resolution helper is VMware/SPICE-specific. It is not started automatically, so physical machines and other hypervisors are unaffected. Enable it manually only in a compatible VM after reviewing the script.
 
 ## Installation
 
@@ -74,7 +75,9 @@ chmod +x install.sh
 sudo ./install.sh
 ```
 
-Use `sudo` as shown so the installer can install system packages. The script attempts to identify the normal desktop user and install user configuration into that account's home directory. Run it from the cloned repository directory.
+Use `sudo` as shown so the installer can install system packages. The script detects the invoking desktop user, home directory, and primary group instead of assuming a particular username or home path. Run it from the cloned repository directory.
+
+The installer refreshes APT indexes but does not run a full Kali distribution upgrade. It does not change DNS/network settings or system-wide sleep policy. Set `DISABLE_SYSTEM_SLEEP=1` before running it only if you explicitly want to mask suspend/hibernate targets. Temporary download failures are retried where supported; optional components can be skipped without aborting the core setup.
 
 ### Login-screen wallpaper
 
@@ -214,7 +217,7 @@ The repository includes `config/i3/set-resolution-vmware.sh`. During installatio
 ~/.config/i3/set-resolution-vmware.sh
 ```
 
-The i3 configuration starts it automatically. The script periodically checks the connected virtual display and its preferred `xrandr` mode. When SPICE advertises a stable new preferred mode, the script applies it and restores the wallpaper. This helps the Kali desktop follow Remote Viewer window resizing and maximization without hard-coding a resolution such as `3840x985`.
+Start the helper manually from i3 only when using a compatible VMware/SPICE display. The script periodically checks the connected virtual display and its preferred `xrandr` mode. When SPICE advertises a stable new preferred mode, the script applies it and restores the wallpaper. This helps the Kali desktop follow Remote Viewer window resizing and maximization without hard-coding a resolution such as `3840x985`.
 
 ### Enablement checklist
 
@@ -304,8 +307,8 @@ The shell scripts below are version-controlled in this repository. **They are no
 | Repository path | Installed path / trigger | What it does |
 |---|---|---|
 | `config/i3/scripts/power-performance.sh` | `~/.config/i3/scripts/power-performance.sh`; started at i3 login | Disables X11 screen blanking and DPMS, then requests the **Performance** power profile through `powerprofilesctl`. |
-| `config/i3/set-resolution-vmware.sh` | `~/.config/i3/set-resolution-vmware.sh`; started at i3 login | Watches VMware `Virtual-*` display modes; applies a newly advertised preferred resolution, reapplies the wallpaper, and restarts Polybar. Log: `/tmp/0x0ps-vmware-resize.log`. |
-| `config/i3/clipboard_fix.sh` | `~/.config/i3/clipboard_fix.sh`; started by i3 | Restarts the VMware user agent process (`vmtoolsd -n vmusr`) to support clipboard integration. |
+| `config/i3/set-resolution-vmware.sh` | `~/.config/i3/set-resolution-vmware.sh`; optional / manual | Watches VMware `Virtual-*` display modes; applies a newly advertised preferred resolution, reapplies the wallpaper, and restarts Polybar. Log: `/tmp/0x0ps-vmware-resize.log`. |
+| `config/i3/clipboard_fix.sh` | `~/.config/i3/clipboard_fix.sh`; optional / manual | Restarts the VMware user agent process (`vmtoolsd -n vmusr`) to support clipboard integration. |
 | `config/polybar/launch.sh` | `~/.config/polybar/launch.sh`; started by i3 | Quits existing Polybar instances and launches the configured bar. Logs: `/tmp/polybar1.log` and `/tmp/polybar2.log`. |
 | `config/polybar/scripts/workspaces.sh` | Used by the Polybar workspace module | Displays i3 workspaces 1–10 and highlights the active workspace. |
 | `config/bin/htb.sh` | `~/.config/bin/htb.sh`; called by Polybar | Shows the `tun0` address when the HTB VPN is connected, otherwise “Disconnected”. |
@@ -473,7 +476,7 @@ The main installer downloads or installs these components in addition to files s
 
 The installer also applies system-level power settings: it masks `sleep.target`, `suspend.target`, `hibernate.target`, and `hybrid-sleep.target`; disables optional screen-locker / desktop power-manager services when present; and enables `power-profiles-daemon`. At i3 login, `power-performance.sh` disables X11 screensaver/DPMS and requests the Performance profile. A VM or host may not expose a Performance profile; in that case, the helper reports that it is unavailable while the no-blanking settings still apply.
 
-**Security note:** review the installer and downloaded upstream code before execution. The uv bootstrap is piped directly to a shell by the installer, and upstream repositories/releases may change over time.
+**Security note:** review the installer and downloaded upstream code before execution. The installer downloads and runs the official uv bootstrap script, and upstream repositories/releases may change over time.
 
 ## Troubleshooting
 
