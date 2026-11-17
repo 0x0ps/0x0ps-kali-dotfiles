@@ -23,7 +23,6 @@ bindsym $mod+Shift+f exec firefox
 for_window [class="Firefox"] move to workspace 2
 
 # Language layout
-exec --no-startup-id setxkbmap "us" ",winkeys" "grp:ctrl_alt_toggle"
 
 # Program launcher
 bindsym $mod+d exec --no-startup-id rofi -show drun -theme ~/.config/rofi/themes/null0x-launcher.rasi
@@ -152,13 +151,10 @@ client.urgent           #FF5C5C   #FF5C5C    #000000    #FF00AF   #FF5C5C
 # Disable X11 screen blanking/DPMS and request Performance mode.
 exec --no-startup-id ~/.config/i3/scripts/power-performance.sh
 # 0x0ps VictorConky desktop HUD
-exec --no-startup-id sh -c 'pgrep -x conky >/dev/null || conky -c ~/.config/conky/victorconky-medium.conf -d'
-exec --no-startup-id spice-vdagent
-exec --no-startup-id ~/.config/i3/set-resolution-vmware.sh
+exec --no-startup-id sh -c 'command -v conky >/dev/null 2>&1 && [ -f "$HOME/.config/conky/victorconky-medium.conf" ] && (pgrep -x conky >/dev/null || conky -c "$HOME/.config/conky/victorconky-medium.conf" -d)'
+exec --no-startup-id sh -c 'command -v spice-vdagent >/dev/null 2>&1 && spice-vdagent'
 exec_always --no-startup-id sh ~/.fehbg
 exec_always --no-startup-id picom --config ~/.config/compton/compton.conf --backend xrender --no-use-damage -b
-exec_always --no-startup-id ~/.config/i3/clipboard_fix.sh
-exec --no-startup-id vmware-user-suid-wrapper
 exec --no-startup-id sleep 2 && copyq
 
 # Screenshot & utility bindings
