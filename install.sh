@@ -239,6 +239,10 @@ fi
 log "Configuring Firefox security and pentest extensions"
 
 if [[ -n "$FIREFOX_BIN" ]]; then
+    # Define the policy path independently of the optional theme lookup above.
+    FIREFOX_POLICY_DIR="/etc/firefox/policies"
+    FIREFOX_POLICY="$FIREFOX_POLICY_DIR/policies.json"
+    install -d -m 0755 "$FIREFOX_POLICY_DIR"
     # Resolve each extension GUID from Mozilla AMO at install time. This avoids
     # hard-coding extension IDs and always downloads the current signed release.
     python3 - "$FIREFOX_POLICY" <<'PY'
