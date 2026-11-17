@@ -233,6 +233,101 @@ else
     warn "Firefox was not found; skipping Cyberpunk theme installation."
 fi
 
+
+# ---------- Firefox security / pentest extensions ----------
+
+log "Configuring Firefox security and pentest extensions"
+
+if [[ -n "$FIREFOX_BIN" ]]; then
+    # Resolve each extension GUID from Mozilla AMO at install time. This avoids
+    # hard-coding extension IDs and always downloads the current signed release.
+    python3 - "$FIREFOX_POLICY" <<'PY'
+import json
+import os
+import sys
+import tempfile
+import urllib.error
+import urllib.request
+
+path = sys.argv[1]
+addons = {
+    "bitwarden-password-manager": "Bitwarden Password Manager",
+    "hacktools": "HackTools",
+    "shodan-addon": "Shodan",
+    "wappalyzer": "Wappalyzer",
+    "cookie-editor": "Cookie-Editor",
+    "multi-account-containers": "Firefox Multi-Account Containers",
+    "foxyproxy-standard": "FoxyProxy Standard",
+    "show-ip": "show-my-ip",
+}
+
+data = {}
+if os.path.exists(path):
+    with open(path, encoding="utf-8") as source:
+        data = json.load(source)
+
+policies = data.setdefault("policies", {})
+settings = policies.setdefault("ExtensionSettings", {})
+installed = []
+failed = []
+
+for slug, expected_name in addons.items():
+    url = f"https://addons.mozilla.org/api/v5/addons/addon/{slug}/"
+    request = urllib.request.Request(
+        url, headers={"User-Agent": "0x0ps-Kali-Installer/1.0"}
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            addon = json.load(response)
+
+        guid = addon.get("guid")
+        actual_name = addon.get("name", {}).get("en-US", "")
+        if not isinstance(guid, str) or not guid.strip():
+            raise ValueError("Mozilla AMO did not return a valid extension ID")
+        if actual_name.casefold() != expected_name.casefold():
+            raise ValueError(
+                f"Name mismatch: expected {expected_name!r}, got {actual_name!r}"
+            )
+
+        settings[guid.strip()] = {
+            "installation_mode": "normal_installed",
+            "install_url": (
+                f"https://addons.mozilla.org/firefox/downloads/latest/{slug}/latest.xpi"
+            ),
+        }
+        installed.append(expected_name)
+        print(f"[+] Firefox extension queued: {expected_name}")
+    except (urllib.error.URLError, TimeoutError, ValueError, KeyError, json.JSONDecodeError) as error:
+        failed.append((expected_name, str(error)))
+        print(f"[!] Could not configure {expected_name}: {error}", file=sys.stderr)
+
+# Write atomically and preserve the existing Cyberpunk theme and other policies.
+directory = os.path.dirname(path)
+fd, temporary = tempfile.mkstemp(prefix=".policies-", dir=directory, text=True)
+try:
+    with os.fdopen(fd, "w", encoding="utf-8") as output:
+        json.dump(data, output, indent=2)
+        output.write("\n")
+    os.chmod(temporary, 0o644)
+    os.replace(temporary, path)
+finally:
+    if os.path.exists(temporary):
+        os.unlink(temporary)
+
+print(f"[+] Configured {len(installed)}/{len(addons)} Firefox extensions.")
+if failed:
+    print(
+        "[!] Some extensions were skipped. Rerun install.sh after checking "
+        "the Mozilla Add-ons API/network connection.",
+        file=sys.stderr,
+    )
+PY
+
+    log "Firefox extension policies configured. Firefox will install them at next startup."
+else
+    warn "Firefox was not found; skipping automatic extension installation."
+fi
+
 # ---------- Slick Greeter / LightDM ----------
 
 log "Configuring Slick Greeter and LightDM"
