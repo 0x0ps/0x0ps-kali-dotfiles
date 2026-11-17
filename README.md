@@ -78,7 +78,7 @@ sudo ./install.sh
 
 Use `sudo` as shown so the installer can install system packages. The script detects the invoking desktop user, home directory, and primary group instead of assuming a particular username or home path. Run it from the cloned repository directory.
 
-The installer refreshes APT indexes but does not run a full Kali distribution upgrade. It does not change DNS/network settings or system-wide sleep policy. Set `DISABLE_SYSTEM_SLEEP=1` before running it only if you explicitly want to mask suspend/hibernate targets. Temporary download failures are retried where supported; optional components can be skipped without aborting the core setup.
+The installer preserves the existing keyboard layout, refreshes APT indexes, and does not run a full Kali distribution upgrade. It does not change DNS/network settings or system-wide sleep policy. Use `sudo env DISABLE_SYSTEM_SLEEP=1 ./install.sh` only if you explicitly want to mask suspend/hibernate targets. Temporary download failures are retried where supported; optional components can be skipped without aborting the core setup.
 
 ### Login-screen wallpaper
 
