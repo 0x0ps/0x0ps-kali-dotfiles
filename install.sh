@@ -38,6 +38,7 @@ fi
 USER_HOME="$(getent passwd "$ACTUAL_USER" | cut -d: -f6)"
 [[ -d "$USER_HOME" ]] || die "Could not determine home directory for $ACTUAL_USER."
 USER_UID="$(id -u "$ACTUAL_USER")"
+ACTUAL_GROUP="$(id -gn "$ACTUAL_USER")"
 
 run_as_user() {
     sudo -u "$ACTUAL_USER" -H "$@"
@@ -49,7 +50,7 @@ fix_owner() {
     local p
     for p in "$@"; do
         if [[ -e "$p" || -L "$p" ]]; then
-            chown -R "$ACTUAL_USER:$ACTUAL_USER" "$p"
+            chown -R "$ACTUAL_USER:$ACTUAL_GROUP" "$p"
         fi
     done
     return 0
@@ -74,11 +75,10 @@ export DEBIAN_FRONTEND=noninteractive
 
 # ---------- System update ----------
 
-log "Refreshing APT package indexes"
-apt-get update
+log "Refreshing APT package indexes with transient-failure retries"
+apt-get -o "Acquire::Retries=${APT_RETRIES:-3}" -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
 
-log "Applying full Kali Linux system upgrade"
-apt-get full-upgrade -y
+# Do not perform a full distribution upgrade as a side effect of installing dotfiles.
 
 # ---------- Packages ----------
 
@@ -130,14 +130,16 @@ apt-get install -y \
     spice-vdagent \
     conky-all \
     power-profiles-daemon \
-    jq \
+    jq
 
-# ---------- 0x0ps performance / no-standby policy ----------
+# ---------- 0x0ps performance / optional power policy ----------
 
-log "Disabling standby, screen lockers and energy-saving services"
-
-# Prevent system-wide suspend/hibernate, including idle and lid-triggered requests.
-systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+log "Configuring desktop power helpers"
+if [[ "${DISABLE_SYSTEM_SLEEP:-0}" == "1" ]]; then
+    systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+else
+    log "System sleep settings left unchanged (set DISABLE_SYSTEM_SLEEP=1 to opt in)."
+fi
 
 # Stop optional desktop power managers/lockers if present; i3 uses the settings below.
 for unit in light-locker.service xscreensaver.service xfce4-power-manager.service; do
@@ -494,7 +496,12 @@ run_as_user mkdir -p \
 
 log "Installing/updating uv for $ACTUAL_USER"
 
-run_as_user bash -c 'curl -LsSf https://astral.sh/uv/install.sh | sh'
+UV_INSTALLER="$CACHE_DIR/uv-install.sh"
+if run_as_user curl --fail --location --show-error --retry 5 --retry-all-errors --retry-delay 3 --connect-timeout 15 --max-time 180 https://astral.sh/uv/install.sh -o "$UV_INSTALLER"; then
+    run_as_user bash "$UV_INSTALLER"
+else
+    warn "Could not download uv; pywal installation will be skipped."
+fi
 
 UV_BIN=""
 for candidate in "$USER_HOME/.local/bin/uv" "$USER_HOME/.cargo/bin/uv"; do
@@ -592,9 +599,15 @@ VICTOR_REPO="https://github.com/Gictorbit/victorconky.git"
 
 # Fetch upstream assets (PNG artwork + Zekton/Chinacat fonts).
 rm -rf "$VICTORCONKY_TMP"
-run_as_user git clone --depth 1 "$VICTOR_REPO" "$VICTORCONKY_TMP"
+if ! run_as_user git clone --depth 1 "$VICTOR_REPO" "$VICTORCONKY_TMP"; then
+    warn "VictorConky download failed; skipping the optional desktop HUD."
+    VICTORCONKY_AVAILABLE=0
+else
+    VICTORCONKY_AVAILABLE=1
+fi
 
-install -d -m 0755 -o "$ACTUAL_USER" -g "$(id -gn "$ACTUAL_USER")" \
+if [[ "$VICTORCONKY_AVAILABLE" == "1" ]]; then
+install -d -m 0755 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
     "$VICTORCONKY_DIR" "$VICTOR_FONT_DIR" "$CONKY_CONFIG_DIR"
 
 # Install the version-controlled 0x0ps Neon Fuchsia artwork.
@@ -633,6 +646,9 @@ run_as_user fc-cache -f
 rm -rf "$VICTORCONKY_TMP"
 
 log "VictorConky installed. It will start automatically with i3."
+else
+    warn "VictorConky was skipped; its optional i3 autostart will do nothing."
+fi
 
 # ---------- Fastfetch ----------
 
@@ -652,13 +668,13 @@ fi
 if [[ -f "$SCRIPT_DIR/config/fastfetch/config.jsonc" ]]; then
     sed "s|@USER_HOME@|$USER_HOME|g" \
         "$SCRIPT_DIR/config/fastfetch/config.jsonc" > "$FASTFETCH_CONFIG"
-    chown "$ACTUAL_USER:$ACTUAL_USER" "$FASTFETCH_CONFIG"
+    chown "$ACTUAL_USER:$ACTUAL_GROUP" "$FASTFETCH_CONFIG"
 else
     warn "Fastfetch config template missing; keeping the existing configuration."
 fi
 
 if [[ -f "$FASTFETCH_LOGO_SOURCE" ]]; then
-    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$FASTFETCH_LOGO_SOURCE" "$FASTFETCH_LOGO_DEST"
 else
     warn "0x0PS Fastfetch PNG missing: $FASTFETCH_LOGO_SOURCE"
@@ -670,7 +686,7 @@ fi
 log "Installing zsh and tmux configuration"
 
 # .tmux.conf dai dotfiles
-install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
     "$SCRIPT_DIR/config/.tmux.conf" "$USER_HOME/.tmux.conf"
 
 # .zshrc: NON sovrascriviamo quello di Kali (prompt, alias, colori, completion),
@@ -679,7 +695,7 @@ ZSHRC="$USER_HOME/.zshrc"
 
 if [[ ! -f "$ZSHRC" ]]; then
     if [[ -f /etc/skel/.zshrc ]]; then
-        install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" /etc/skel/.zshrc "$ZSHRC"
+        install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" /etc/skel/.zshrc "$ZSHRC"
     else
         run_as_user touch "$ZSHRC"
     fi
@@ -744,7 +760,7 @@ PROMPT='%F{#A6FF00}┌──(%F{#A6FF00}%n%F{#00FFFF}㉿%F{#00FFFF}%m%F{#A6FF00}
 # <<< 0x0ps <<<
 ZSHBLOCK
 
-chown "$ACTUAL_USER:$ACTUAL_USER" "$ZSHRC" "$ZSHRC.bak"
+chown "$ACTUAL_USER:$ACTUAL_GROUP" "$ZSHRC" "$ZSHRC.bak"
 
 # ---------- Git neon colors and useful aliases ----------
 
@@ -772,8 +788,10 @@ if [[ -d "$USER_HOME/.tmux/plugins/tpm/.git" ]]; then
     run_as_user git -C "$USER_HOME/.tmux/plugins/tpm" pull --ff-only
 else
     rm -rf "$USER_HOME/.tmux/plugins/tpm"
-    run_as_user git clone https://github.com/tmux-plugins/tpm \
-        "$USER_HOME/.tmux/plugins/tpm"
+    if ! run_as_user git clone --depth 1 https://github.com/tmux-plugins/tpm \
+        "$USER_HOME/.tmux/plugins/tpm"; then
+        warn "TPM download failed; install it manually or rerun the installer later."
+    fi
 fi
 
 # ---------- Configuration ----------
@@ -794,27 +812,27 @@ copy_if_exists "$SCRIPT_DIR/config/bin"  "$USER_HOME/.config/"
 
 # Neon CLI tools: version-controlled user configuration.
 if [[ -f "$SCRIPT_DIR/config/lsd/config.yaml" ]]; then
-    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$SCRIPT_DIR/config/lsd/config.yaml" "$USER_HOME/.config/lsd/config.yaml"
 fi
 if [[ -f "$SCRIPT_DIR/config/lsd/colors.yaml" ]]; then
-    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$SCRIPT_DIR/config/lsd/colors.yaml" "$USER_HOME/.config/lsd/colors.yaml"
 fi
 if [[ -f "$SCRIPT_DIR/config/bat/config" ]]; then
-    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$SCRIPT_DIR/config/bat/config" "$USER_HOME/.config/bat/config"
 fi
 if [[ -f "$SCRIPT_DIR/config/fzf/fzf.zsh" ]]; then
-    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$SCRIPT_DIR/config/fzf/fzf.zsh" "$USER_HOME/.config/fzf/fzf.zsh"
 fi
 if [[ -f "$SCRIPT_DIR/config/btop/btop.conf" ]]; then
-    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$SCRIPT_DIR/config/btop/btop.conf" "$USER_HOME/.config/btop/btop.conf"
 fi
 if [[ -f "$SCRIPT_DIR/config/btop/themes/0x0ps-neon.theme" ]]; then
-    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$SCRIPT_DIR/config/btop/themes/0x0ps-neon.theme" "$USER_HOME/.config/btop/themes/0x0ps-neon.theme"
 fi
 
@@ -853,7 +871,7 @@ LAUNCHER_SOURCE="$SCRIPT_DIR/config/rofi/themes/null0x-launcher.rasi"
 LAUNCHER_DEST="$USER_HOME/.config/rofi/themes/null0x-launcher.rasi"
 if [[ -f "$LAUNCHER_SOURCE" ]]; then
     mkdir -p "$USER_HOME/.config/rofi/themes"
-    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$LAUNCHER_SOURCE" "$LAUNCHER_DEST"
 else
     warn "Rofi launcher theme missing; skipping launcher theme installation."
@@ -865,9 +883,9 @@ POWERMENU_DEST="$USER_HOME/.config/rofi/powermenu/type-5"
 
 if [[ -f "$POWERMENU_SOURCE/powermenu.sh" && -f "$POWERMENU_SOURCE/style-1.rasi" ]]; then
     mkdir -p "$POWERMENU_DEST"
-    install -m 0755 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0755 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$POWERMENU_SOURCE/powermenu.sh" "$POWERMENU_DEST/powermenu.sh"
-    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_USER" \
+    install -m 0644 -o "$ACTUAL_USER" -g "$ACTUAL_GROUP" \
         "$POWERMENU_SOURCE/style-1.rasi" "$POWERMENU_DEST/style-1.rasi"
 else
     warn "Rofi powermenu source files are missing; skipping powermenu installation."
