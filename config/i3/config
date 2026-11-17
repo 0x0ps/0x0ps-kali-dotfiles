@@ -22,8 +22,6 @@ bindsym $mod+Escape exec --no-startup-id ~/.config/rofi/powermenu/type-5/powerme
 bindsym $mod+Shift+f exec firefox
 for_window [class="Firefox"] move to workspace 2
 
-# Language layout
-
 # Program launcher
 bindsym $mod+d exec --no-startup-id rofi -show drun -theme ~/.config/rofi/themes/null0x-launcher.rasi
 
