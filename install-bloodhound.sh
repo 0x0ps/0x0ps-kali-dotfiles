@@ -24,6 +24,7 @@ ACTUAL_USER="${SUDO_USER:-}"
 
 USER_HOME="$(getent passwd "$ACTUAL_USER" | cut -d: -f6)"
 [[ -d "$USER_HOME" ]] || die "User home directory not found."
+ACTUAL_GROUP="$(id -gn "$ACTUAL_USER")"
 
 run_as_user() {
     sudo -u "$ACTUAL_USER" -H "$@"
@@ -69,8 +70,8 @@ usermod -aG docker "$ACTUAL_USER"
 
 systemctl enable --now docker
 
-run_as_user docker info >/dev/null 2>&1 ||
-    die "Docker is not accessible by $ACTUAL_USER."
+docker info >/dev/null 2>&1 ||
+    die "Docker daemon is not accessible to root after installation."
 
 log "Downloading official BloodHound CLI"
 
@@ -79,8 +80,9 @@ BH_CLI_URL="https://github.com/SpecterOps/bloodhound-cli/releases/latest/downloa
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-curl -fL --retry 3 "$BH_CLI_URL" \
-    -o "$TMP_DIR/bloodhound-cli.tar.gz"
+curl --fail --location --show-error --retry 5 --retry-all-errors \
+    --retry-delay 3 --connect-timeout 15 --max-time 600 \
+    "$BH_CLI_URL" -o "$TMP_DIR/bloodhound-cli.tar.gz"
 
 tar -xzf "$TMP_DIR/bloodhound-cli.tar.gz" -C "$TMP_DIR"
 
@@ -106,11 +108,11 @@ BH_ENV=(
 
 if [[ -f "$BHCE_DIR/docker-compose.yml" ]]; then
     log "Existing BloodHound CE installation found: updating"
-    run_as_user "${BH_ENV[@]}" bloodhound-cli update
+    run_as_user sg docker -c "XDG_CONFIG_HOME=\"$XDG_CONFIG_HOME\" PATH=\"/usr/local/bin:$USER_HOME/.local/bin:/usr/bin:/bin\" bloodhound-cli update"
 else
     log "Installing BloodHound Community Edition"
     log "IMPORTANT: save the generated admin password."
-    run_as_user "${BH_ENV[@]}" bloodhound-cli install
+    run_as_user sg docker -c "XDG_CONFIG_HOME=\"$XDG_CONFIG_HOME\" PATH=\"/usr/local/bin:$USER_HOME/.local/bin:/usr/bin:/bin\" bloodhound-cli install"
 fi
 
 log "BloodHound CE installation completed."
