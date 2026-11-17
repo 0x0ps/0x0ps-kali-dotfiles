@@ -147,7 +147,24 @@ apt-get install -y \
     spice-vdagent \
     conky-all \
     power-profiles-daemon \
-    jq
+    jq \
+    pipx
+
+# ---------- Shodan CLI ----------
+
+log "Installing Shodan CLI with pipx"
+
+# Install Shodan in an isolated environment instead of modifying Kali's
+# system-managed Python packages (PEP 668).
+if run_as_user pipx install --force shodan; then
+    if [[ -x "$USER_HOME/.local/bin/shodan" ]]; then
+        log "Shodan CLI installed successfully."
+    else
+        warn "Shodan installation completed, but the CLI executable was not found in ~/.local/bin."
+    fi
+else
+    warn "Shodan CLI installation failed; rerun with: pipx install --force shodan"
+fi
 
 # ---------- 0x0ps performance / optional power policy ----------
 
