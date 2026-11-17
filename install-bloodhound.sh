@@ -24,7 +24,6 @@ ACTUAL_USER="${SUDO_USER:-}"
 
 USER_HOME="$(getent passwd "$ACTUAL_USER" | cut -d: -f6)"
 [[ -d "$USER_HOME" ]] || die "User home directory not found."
-ACTUAL_GROUP="$(id -gn "$ACTUAL_USER")"
 
 run_as_user() {
     sudo -u "$ACTUAL_USER" -H "$@"
@@ -99,12 +98,6 @@ BHCE_DIR="$USER_HOME/.config/bloodhound"
 XDG_CONFIG_HOME="$USER_HOME/.config"
 
 run_as_user mkdir -p "$BHCE_DIR"
-
-BH_ENV=(
-    env
-    "XDG_CONFIG_HOME=$XDG_CONFIG_HOME"
-    "PATH=/usr/local/bin:$USER_HOME/.local/bin:/usr/bin:/bin"
-)
 
 if [[ -f "$BHCE_DIR/docker-compose.yml" ]]; then
     log "Existing BloodHound CE installation found: updating"
