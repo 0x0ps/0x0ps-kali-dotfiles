@@ -1,12 +1,14 @@
 #!/bin/sh
-
-ip_target=$(cat ~/.config/bin/target | awk '{print $1}')
-name_target=$(cat ~/.config/bin/target | awk '{print $2}')
-
-	if [ $ip_target ] && [ $name_target ]; then
-	echo "%{F#cf9fff}什%{F#ffffff} $ip_target - $name_target"
-	elif [ $(cat ~/.config/bin/target | wc -w) -eq 1 ]; then
-	echo "%{F#cf9fff}什%{F#ffffff} $ip_target"
-	else
-	echo "%{F#cf9fff}ﲅ %{u-}%{F#ffffff} No target"
-	fi
+TARGET_FILE="$HOME/.config/bin/target"
+ip_target=""
+name_target=""
+if [ -r "$TARGET_FILE" ]; then
+    read -r ip_target name_target < "$TARGET_FILE" || true
+fi
+if [ -n "$ip_target" ] && [ -n "$name_target" ]; then
+    printf '%%{F#cf9fff}什%%{F#ffffff} %s - %s\n' "$ip_target" "$name_target"
+elif [ -n "$ip_target" ]; then
+    printf '%%{F#cf9fff}什%%{F#ffffff} %s\n' "$ip_target"
+else
+    printf '%%{F#cf9fff}ﲅ %%{u-}%%{F#ffffff} No target\n'
+fi
