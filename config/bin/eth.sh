@@ -1,9 +1,13 @@
 #!/bin/sh
-
-IFACE=$(/usr/sbin/ifconfig | grep eth0 | awk '{print $1}' | tr -d ':')
-
-if [ "$IFACE" = "eth0" ]; then
-        echo "%{F#1bbf3e} %{F#ffffff}$(/usr/sbin/ifconfig eth0 | grep "inet " | awk '{print $2}')%{u-}"
+# Display the IPv4 address of the interface carrying the default route.
+IFACE=""
+ADDRESS=""
+if command -v ip >/dev/null 2>&1; then
+    IFACE=$(ip -4 route show default 2>/dev/null | awk 'NR==1 {for (i=1;i<=NF;i++) if ($i=="dev") {print $(i+1); exit}}')
+    ADDRESS=$(ip -o -4 addr show dev "$IFACE" scope global 2>/dev/null | awk 'NR==1 {split($4,a,"/"); print a[1]}')
+fi
+if [ -n "$ADDRESS" ]; then
+    printf '%%{F#1bbf3e} %%{F#ffffff}%s%%{u-}\n' "$ADDRESS"
 else
-        echo "%{F#2495e7}%{u-} %{F#ffffff}Disconnected"
+    printf '%%{F#2495e7}%%{u-} %%{F#ffffff}Disconnected\n'
 fi
