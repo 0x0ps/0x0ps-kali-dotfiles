@@ -161,7 +161,7 @@ log "Installing Shodan CLI with pipx"
 if run_as_user pipx install --force shodan; then
     # Shodan CLI currently imports pkg_resources. setuptools 82+ removed it,
     # so keep a compatible setuptools version inside Shodan's isolated pipx venv.
-    if run_as_user pipx runpip shodan install "setuptools<80.9"; then
+    if run_as_user pipx runpip shodan install "setuptools==80.8.0"; then
         if [[ -x "$USER_HOME/.local/bin/shodan" ]] && \
            run_as_user "$USER_HOME/.local/bin/shodan" version >/dev/null 2>&1; then
             log "Shodan CLI installed and verified successfully."
@@ -169,7 +169,7 @@ if run_as_user pipx install --force shodan; then
             warn "Shodan was installed, but its CLI verification failed."
         fi
     else
-        warn "Could not install compatible setuptools for Shodan. Rerun: pipx runpip shodan install 'setuptools<80.9'"
+        warn "Could not install compatible setuptools for Shodan. Rerun: pipx runpip shodan install 'setuptools==80.8.0'"
     fi
 else
     warn "Shodan CLI installation failed; rerun with: pipx install --force shodan"
