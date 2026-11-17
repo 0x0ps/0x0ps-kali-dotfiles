@@ -518,16 +518,41 @@ fi
 
 install_zip_font() {
     local url="$1" archive="$2" destination="$3"
+    local archive_path="$CACHE_DIR/$archive"
+    local temporary_path="$CACHE_DIR/.${archive}.part"
 
     log "Installing font archive: $archive"
 
-    if [[ ! -s "$CACHE_DIR/$archive" ]]; then
-        run_as_user curl -fL "$url" -o "$CACHE_DIR/$archive"
+    # Validate cached archives before reusing them. A failed/interrupted
+    # download must never leave a partial file that breaks the whole installer.
+    if [[ -s "$archive_path" ]] && run_as_user unzip -tq "$archive_path" >/dev/null 2>&1; then
+        log "$archive already cached and valid; reusing it."
     else
-        log "$archive already cached; reusing it."
+        [[ ! -e "$archive_path" ]] || {
+            warn "$archive cache is incomplete or invalid; downloading it again."
+            rm -f "$archive_path"
+        }
+        rm -f "$temporary_path"
+
+        if ! run_as_user curl --fail --location --show-error \
+            --retry 5 --retry-all-errors --retry-delay 3 \
+            --connect-timeout 15 --max-time 600 \
+            "$url" -o "$temporary_path"; then
+            warn "Could not download $archive after retries; skipping this optional font."
+            rm -f "$temporary_path"
+            return 0
+        fi
+
+        if ! run_as_user unzip -tq "$temporary_path" >/dev/null 2>&1; then
+            warn "$archive download is not a valid ZIP archive; skipping this optional font."
+            rm -f "$temporary_path"
+            return 0
+        fi
+
+        run_as_user mv "$temporary_path" "$archive_path"
     fi
 
-    run_as_user unzip -o "$CACHE_DIR/$archive" -d "$destination" >/dev/null
+    run_as_user unzip -o "$archive_path" -d "$destination" >/dev/null
 }
 
 install_zip_font \
