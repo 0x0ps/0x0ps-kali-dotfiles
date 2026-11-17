@@ -222,15 +222,15 @@ Start the helper manually from i3 only when using a compatible VMware/SPICE disp
 
 ### Enablement checklist
 
-For this feature to work, check that:
+To use this optional helper manually, check that:
 
 1. The VM is opened through **Remote Viewer / SPICE**.
 2. The VM's virtual graphics configuration supports the SPICE display integration (for example, QXL).
 3. The SPICE guest agent is installed and running in Kali.
 4. The session is X11 with i3, and `xrandr` lists a connected output such as `Virtual-1`.
-5. The i3 config contains the startup entry:
-   ```i3
-   exec --no-startup-id ~/.config/i3/set-resolution-vmware.sh
+5. Start the helper manually from a terminal or add it to your own i3 autostart after confirming the VM integration works:
+   ```bash
+   ~/.config/i3/set-resolution-vmware.sh
    ```
 
 Check the display and the script with:
