@@ -318,7 +318,7 @@ The shell scripts below are version-controlled in this repository. **They are no
 | `config/bin/htb_target.sh` | `~/.config/bin/htb_target.sh`; called by Polybar | Reads the current target from `~/.config/bin/target` and displays its IP/name. |
 | `config/i3/scripts/kitty-3pane.sh` | `~/.config/i3/scripts/kitty-3pane.sh`; `Mod + Shift + Enter` | Opens three Kitty terminals in the predefined i3 layout on workspace 9. It does nothing if workspace 9 is already focused. |
 | `config/i3/scripts/kitty-resize-mode.sh` | `~/.config/i3/scripts/kitty-resize-mode.sh`; `Mod + Ctrl + r` | Floats the focused Kitty window and enters the dedicated Kitty resize mode. Focus Kitty first; use the resize-mode keys configured in i3, then press Enter or Esc to leave the mode. |
-| `config/rofi/powermenu/type-5/powermenu.sh` | `~/.config/rofi/powermenu/type-5/powermenu.sh`; `Mod + Esc` | Opens the themed power menu for lock, suspend, logout, hibernate, reboot, and shutdown. Power actions require confirmation. System sleep targets are masked by the main installer, so suspend/hibernate are intentionally unavailable unless you later unmask them. |
+| `config/rofi/powermenu/type-5/powermenu.sh` | `~/.config/rofi/powermenu/type-5/powermenu.sh`; `Mod + Esc` | Opens the themed power menu for lock, suspend, logout, hibernate, reboot, and shutdown. Power actions require confirmation. Suspend/hibernate availability follows the system's existing power policy. The installer leaves sleep targets unchanged by default; use `DISABLE_SYSTEM_SLEEP=1` only if you explicitly want to disable them. |
 
 The main installer also creates the target file at `~/.config/bin/target`. In a new Zsh shell, set or clear the target with:
 
