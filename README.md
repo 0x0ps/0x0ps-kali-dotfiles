@@ -1,6 +1,6 @@
 # 0x0ps Kali Linux Dotfiles
 
-A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi, tmux, and practical helper scripts. It also includes SPICE clipboard support and an adaptive display-resolution script for Kali VMs running under Proxmox with SPICE/QXL graphics.
+A portable Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi, tmux, and practical helper scripts. VMware/SPICE utilities are included for compatible virtual machines but are optional and are not enabled by default.
 
 > **Important:** This repository configures a desktop environment, not just a wallpaper or a single script. The installer installs packages and copies configuration files into your home directory. Read the instructions and review the installer before running it on an existing system.
 
@@ -23,7 +23,8 @@ A customized Kali Linux desktop setup built around **i3**, Polybar, Kitty, Rofi,
 - **Polybar** with custom status modules, including HTB VPN, USB/Ethernet, and target information.
 - **Rofi** application launcher with a custom translucent black theme and acid-green accents (`#A6FF00`).
 - **Rofi Type-5 powermenu** with icon-only controls, black background, and acid-green accents (`#A6FF00`).
-- **Kitty** terminal configuration with the 0x0ps dark / neon palette.\n- **Fastfetch** with a custom 0x0PS PNG logo, Kitty image rendering, and the fuchsia / cyan / white module palette; it launches automatically in each new interactive Zsh terminal.
+- **Kitty** terminal configuration with the 0x0ps dark / neon palette.
+- **Fastfetch** with a custom 0x0PS PNG logo, Kitty image rendering, and the fuchsia / cyan / white module palette; it launches automatically in each new interactive Zsh terminal.
 - **Neon CLI toolkit:** `lsd` with acid-green directories (`#A6FF00`), white files, fuchsia executables, and cyan symlinks; plus `bat`, `fzf`, `btop`, and Git color settings / aliases.
 - **tmux** configuration and TPM plugin manager.
 - **SPICE clipboard integration** for compatible virtual machines.
