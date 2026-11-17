@@ -159,10 +159,17 @@ log "Installing Shodan CLI with pipx"
 # Install Shodan in an isolated environment instead of modifying Kali's
 # system-managed Python packages (PEP 668).
 if run_as_user pipx install --force shodan; then
-    if [[ -x "$USER_HOME/.local/bin/shodan" ]]; then
-        log "Shodan CLI installed successfully."
+    # Shodan CLI currently imports pkg_resources. setuptools 82+ removed it,
+    # so keep a compatible setuptools version inside Shodan's isolated pipx venv.
+    if run_as_user pipx runpip shodan install "setuptools<82"; then
+        if [[ -x "$USER_HOME/.local/bin/shodan" ]] && \
+           run_as_user "$USER_HOME/.local/bin/shodan" version >/dev/null 2>&1; then
+            log "Shodan CLI installed and verified successfully."
+        else
+            warn "Shodan was installed, but its CLI verification failed."
+        fi
     else
-        warn "Shodan installation completed, but the CLI executable was not found in ~/.local/bin."
+        warn "Could not install compatible setuptools for Shodan. Rerun: pipx runpip shodan install 'setuptools<82'"
     fi
 else
     warn "Shodan CLI installation failed; rerun with: pipx install --force shodan"
