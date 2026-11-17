@@ -336,7 +336,7 @@ These are not run by the main desktop installer:
 | Script | Purpose | How to run |
 |---|---|---|
 | `install-bloodhound.sh` | Installs Docker, the official BloodHound CLI, and BloodHound Community Edition; updates an existing installation when its config is present. Supports amd64 and arm64. | From the cloned repository: `sudo ./install-bloodhound.sh`. Save the generated admin password. A new login may be needed after Docker group membership is added. |
-| `install-artex.sh` | Clones the upstream ARTEX autonomous penetration-testing platform into `~/Opt/AI/ARTEX`, creates a private `.env` with a random PostgreSQL password, and starts ARTEX + PostgreSQL with Docker Compose. | Run as your normal user: `./install-artex.sh` (do not use sudo). Requires Docker Compose v2 and working Docker permissions. The UI and traffic proxy are bound to localhost only. |
+| `install-artex.sh` | Clones the upstream ARTEX autonomous penetration-testing platform into `~/Opt/AI/ARTEX`, creates a private `.env` with a random PostgreSQL password, and starts ARTEX + PostgreSQL with Docker Compose. | Run as your normal user: `bash ./install-artex.sh` (do not use sudo). Requires Docker Compose v2 and working Docker permissions. The UI and traffic proxy are bound to localhost only. |
 | `fix-terminal.sh` | Restores the GNOME Terminal dconf settings from `config/gnome_terminal_settings_backup.txt`. | From the repository root, run `dconf load /org/gnome/terminal/ < ./config/gnome_terminal_settings_backup.txt`. The helper itself is simply a wrapper for that command. |
 
 ### Optional: ARTEX AI penetration-testing platform
@@ -346,7 +346,7 @@ The separate `install-artex.sh` helper installs the upstream [ARTEX project](htt
 Requirements: Git, OpenSSL, Docker Engine, Docker Compose v2, and permission for your normal user to run Docker commands. Run it without `sudo`:
 
 ```bash
-./install-artex.sh
+bash ./install-artex.sh
 ```
 
 The helper creates a random PostgreSQL password, protects the `.env` file with mode `600`, preserves an existing `.env`, and binds the ARTEX web UI and traffic proxy to loopback (`127.0.0.1`) only. It builds ARTEX from the upstream checkout and starts the PostgreSQL and ARTEX containers.
