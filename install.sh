@@ -148,7 +148,9 @@ apt-get install -y \
     conky-all \
     power-profiles-daemon \
     jq \
-    pipx
+    pipx \
+    open-vm-tools \
+    open-vm-tools-desktop
 
 # ---------- Shodan CLI ----------
 
