@@ -44,6 +44,21 @@ run_as_user() {
     sudo -u "$ACTUAL_USER" -H "$@"
 }
 
+git_clone_retry() {
+    local url="$1" destination="$2" attempt
+    for attempt in 1 2 3; do
+        if run_as_user git clone --depth 1 "$url" "$destination"; then
+            return 0
+        fi
+        rm -rf "$destination"
+        if [[ "$attempt" -lt 3 ]]; then
+            warn "Git clone failed (attempt $attempt/3); retrying shortly."
+            sleep "$((attempt * 3))"
+        fi
+    done
+    return 1
+}
+
 # chown -R tollerante: salta i path inesistenti (con set -e un chown su
 # path mancante ammazzerebbe lo script)
 fix_owner() {
@@ -599,7 +614,7 @@ VICTOR_REPO="https://github.com/Gictorbit/victorconky.git"
 
 # Fetch upstream assets (PNG artwork + Zekton/Chinacat fonts).
 rm -rf "$VICTORCONKY_TMP"
-if ! run_as_user git clone --depth 1 "$VICTOR_REPO" "$VICTORCONKY_TMP"; then
+if ! git_clone_retry "$VICTOR_REPO" "$VICTORCONKY_TMP"; then
     warn "VictorConky download failed; skipping the optional desktop HUD."
     VICTORCONKY_AVAILABLE=0
 else
@@ -788,8 +803,7 @@ if [[ -d "$USER_HOME/.tmux/plugins/tpm/.git" ]]; then
     run_as_user git -C "$USER_HOME/.tmux/plugins/tpm" pull --ff-only
 else
     rm -rf "$USER_HOME/.tmux/plugins/tpm"
-    if ! run_as_user git clone --depth 1 https://github.com/tmux-plugins/tpm \
-        "$USER_HOME/.tmux/plugins/tpm"; then
+    if ! git_clone_retry https://github.com/tmux-plugins/tpm "$USER_HOME/.tmux/plugins/tpm"; then
         warn "TPM download failed; install it manually or rerun the installer later."
     fi
 fi
