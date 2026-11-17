@@ -93,7 +93,9 @@ export DEBIAN_FRONTEND=noninteractive
 log "Refreshing APT package indexes with transient-failure retries"
 apt-get -o "Acquire::Retries=${APT_RETRIES:-3}" -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
 
-# Do not perform a full distribution upgrade as a side effect of installing dotfiles.
+log "Applying full Kali system upgrade"
+apt-get full-upgrade -y
+
 
 # ---------- Packages ----------
 
