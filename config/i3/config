@@ -150,7 +150,6 @@ client.urgent           #FF5C5C   #FF5C5C    #000000    #FF00AF   #FF5C5C
 exec --no-startup-id ~/.config/i3/scripts/power-performance.sh
 # 0x0ps VictorConky desktop HUD
 exec --no-startup-id sh -c 'command -v conky >/dev/null 2>&1 && [ -f "$HOME/.config/conky/victorconky-medium.conf" ] && (pgrep -x conky >/dev/null || conky -c "$HOME/.config/conky/victorconky-medium.conf" -d)'
-exec --no-startup-id sh -c 'command -v spice-vdagent >/dev/null 2>&1 && spice-vdagent'
 exec_always --no-startup-id sh ~/.fehbg
 exec_always --no-startup-id picom --config ~/.config/compton/compton.conf --backend xrender --no-use-damage -b
 exec --no-startup-id sleep 2 && copyq
